@@ -10,11 +10,17 @@ const StatisticLine = (props) => {
     const { text, value} = props
     if (text == "positive"){
         return(
-            <div>{text} {value} %</div>
+            <tr>
+                <td>{text}</td> 
+                <td>{value} %</td>
+            </tr>
         )
     }
-    return(
-        <div>{text} {value}</div>
+    return (
+        <tr>
+            <td>{text}</td>
+            <td>{value}</td>
+        </tr>
     )
 
 }
@@ -23,14 +29,16 @@ const Statistics = (props) =>{
     const { good, bad, neutral, allRatings, avg} = props
     if(allRatings > 0){
         return (
-            <div>
-                <StatisticLine text="good" value={good} />
-                <StatisticLine text="neutral" value={neutral} />
-                <StatisticLine text="bad" value={bad} />
-                <StatisticLine text="all" value={allRatings} />
-                <StatisticLine text="average" value={avg ? avg / allRatings : 0} />
-                <StatisticLine text="positive" value={good ? (good / allRatings) * 100 : 0} />
-            </div>
+            <table>
+                <tbody>
+                    <StatisticLine text="good" value={good} />
+                    <StatisticLine text="neutral" value={neutral} />
+                    <StatisticLine text="bad" value={bad} />
+                    <StatisticLine text="all" value={allRatings} />
+                    <StatisticLine text="average" value={avg ? avg / allRatings : 0} />
+                    <StatisticLine text="positive" value={good ? (good / allRatings) * 100 : 0} />
+                </tbody>
+            </table>
         )
     }
     return (
