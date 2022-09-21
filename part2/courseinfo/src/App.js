@@ -40,8 +40,8 @@ const Total = ({ parts }) => {
     return(
         <div> 
             <b>
-                total of {parts.map(item => item.exercises).reduce(
-                    (prev, curr) => prev + curr,
+                total of {parts.reduce(
+                    (prev, curr) => prev + curr.exercises,
                     0
                 )} exercises
             </b>
