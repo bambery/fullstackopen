@@ -1,5 +1,20 @@
 import { useState } from 'react'
 
+/*const MostVotes = ({ maxIndex, maxAnecdote, numVotes }) => {
+    if(maxIndex !== null && maxIndex > -1){
+        return (
+            <div>
+                <h1>Aphorism with most votes</h1>
+                <div>{maxAnecdote}</div>
+                <div>has {numVotes} votes</div>
+            </div>
+
+        )
+    }
+
+}
+*/
+
 const App = () => {
     // these are not anecdotes, they are aphorisms.
     const anecdotes = [
@@ -14,24 +29,31 @@ const App = () => {
 
     const [selected, setSelected] = useState(0)
     const [points, setPoints] = useState( new Array(anecdotes.length).fill(0) )
-
     const handleClick = () => {
         setSelected( Math.floor(Math.random() * anecdotes.length) )
     }
 
-    // it is not clear what should happen when the "vote" button is pressed. Should I allow the user to hit it multiple times? Should it generate a new aphorism? I am going to choose to allow the user to add as many votes as they like and have no other action taken
+    // it is not clear what should happen when the "vote" button is pressed. Should I allow the user to hit it multiple times? Should it generate a new aphorism? I am going to choose to allow the user to add as many votes as they like and have no other page action taken
     const tallyVotes = () => {
-        const copy = { ...points}
+        const copy = [ ...points ]
         copy[selected] += 1
         setPoints(copy)
     }
 
+    const maxIndex = points.indexOf(Math.max(...points))
+
     return (
         <div>
+            <h1>Aphorism of the day</h1>
             <div>{anecdotes[selected]}</div>
             <div>has {points[selected]} votes</div>
             <button onClick={tallyVotes}>vote</button>
             <button onClick={handleClick}>next aphorism</button>
+            <div>
+                <h1>Aphorism with most votes</h1>
+                <div>{anecdotes[maxIndex]}</div>
+                <div>has {points[maxIndex]} votes</div>
+            </div>
         </div>
     )
 }
