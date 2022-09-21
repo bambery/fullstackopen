@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 const App = () => {
+    // these are not anecdotes, they are aphorisms.
     const anecdotes = [
         'If it hurts, do it more often.',
         'Adding manpower to a late software project makes it later!',
@@ -12,15 +13,25 @@ const App = () => {
     ]
 
     const [selected, setSelected] = useState(0)
+    const [points, setPoints] = useState( new Array(anecdotes.length).fill(0) )
 
-    const handleClick = () =>{
+    const handleClick = () => {
         setSelected( Math.floor(Math.random() * anecdotes.length) )
+    }
+
+    // it is not clear what should happen when the "vote" button is pressed. Should I allow the user to hit it multiple times? Should it generate a new aphorism? I am going to choose to allow the user to add as many votes as they like and have no other action taken
+    const tallyVotes = () => {
+        const copy = { ...points}
+        copy[selected] += 1
+        setPoints(copy)
     }
 
     return (
         <div>
             <div>{anecdotes[selected]}</div>
-            <button onClick={handleClick}>next anecdote</button>
+            <div>has {points[selected]} votes</div>
+            <button onClick={tallyVotes}>vote</button>
+            <button onClick={handleClick}>next aphorism</button>
         </div>
     )
 }
