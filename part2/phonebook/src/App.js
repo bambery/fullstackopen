@@ -3,11 +3,56 @@ import { useState } from 'react'
 const Numbers = ({ persons }) =>{
     return(
         <div>
-            {persons.map(person=>
-                <div key={person.name}>{person.name} {person.number}</div>
-            )}
+            <h3>Numbers</h3>
+            <div>
+                {persons.map(person=>
+                    <Person key={person.name} person={person}/>
+                )}
+            </div>
         </div>
     )
+}
+
+const Person = ({ person }) => {
+    return <div>{person.name} {person.number}</div>
+}
+
+const Filter = ( props ) =>{  
+    const { handleFilterChange, filter } = props
+    return (
+        <div>
+            filter shown with: <input 
+                id="filter"
+                onChange={handleFilterChange}
+                value={filter}
+            />
+        </div>
+    )
+}
+
+const PersonForm = (props) => {
+    const {addName, handleNameChange, newName, handleNumberChange, newNumber} = props
+    return (
+            <form onSubmit={addName}>
+                <h3>add a new</h3>
+                <div>
+                    name: <input 
+                        onChange={handleNameChange}
+                        value={newName}
+                    />
+                </div>
+                <div>
+                    number: <input 
+                        onChange={handleNumberChange}
+                        value={newNumber}
+                    />
+                </div>
+                <div>
+                    <button type="submit">add</button>
+                </div>
+            </form>
+    )
+
 }
 
 const App = () => {
@@ -34,15 +79,11 @@ const App = () => {
         setFilter(event.target.value)
     }
 
-    const personsToShow = ()=>{
+    const personsToShow = 
         // show all if filter is blank
-        if(filter){
-            return persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-        } else
-        {
-            return persons
-        }
-    }
+        filter 
+        ? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
+        : persons
 
     const addName = (event)=>{
         event.preventDefault()
@@ -65,33 +106,9 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>
-                filter shown with: <input 
-                    id="filter"
-                    onChange={handleFilterChange}
-                    value={filter}
-                />
-            </div>
-            <form onSubmit={addName}>
-                <h2>add a new</h2>
-                <div>
-                    name: <input 
-                        onChange={handleNameChange}
-                        value={newName}
-                    />
-                </div>
-                <div>
-                    number: <input 
-                        onChange={handleNumberChange}
-                        value={newNumber}
-                    />
-                </div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
-            <h2>Numbers</h2>
-            <Numbers persons={personsToShow()} />
+            <Filter handleFilterChange={handleFilterChange} filter={filter}/>
+            <PersonForm addName={addName} handleNameChange={handleNameChange} newName={newName} handleNumberChange={handleNumberChange} newNumber={newNumber} />
+            <Numbers persons={personsToShow} />
         </div>
     )
 }
