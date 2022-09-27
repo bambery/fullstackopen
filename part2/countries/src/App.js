@@ -37,12 +37,25 @@ const Country = ({ country }) =>{
         </div>)
 }
 
-const CountryListItem = ({ country }) => {
-    return( <div>{country.name.common}</div> )
+const CountryListItem = ({ country, handleCountryListButtonClick}) => {
+    return( 
+        <div>
+            <span>{country.name.common}</span>
+            <CountryListItemButton handleCountryListButtonClick={e => handleCountryListButtonClick(e, country)} country={country}/>
+        </div> 
+    )
+}
+
+const CountryListItemButton = ( props ) => {
+
+   return(
+       <button onClick={props.handleCountryListButtonClick}>show</button>
+   )
+
 }
 
 const Countries = ( props ) => {
-    const { searchString, results } = props 
+    const { searchString, results, handleCountryListButtonClick } = props 
 
     if( !searchString ){
         return( <div>Please enter a search term.</div> )
@@ -57,11 +70,9 @@ const Countries = ( props ) => {
         return(
             <div >
                 {results.map(country => 
-                    <CountryListItem key={country.cca3} country={country} />
+                    <CountryListItem key={country.cca3} country={country} handleCountryListButtonClick={handleCountryListButtonClick}/>
                 )} 
-            </div>
-        )
-
+            </div>)
     } else { 
         return(
             <div>Too many matches, please specify another filter.</div>
@@ -92,10 +103,15 @@ const App = () => {
         setResults(toShow)
     }
 
+    const handleCountryListButtonClick = (event, country) => {
+        event.preventDefault()
+        setResults([country])
+    }
+
     return (
         <div> 
             <SearchBox searchString={searchString} handleSearchChange={handleSearchChange} />
-            <Countries results={results} searchString={searchString} />
+            <Countries results={results} searchString={searchString} handleCountryListButtonClick={handleCountryListButtonClick}/>
         </div>
     );
 }
