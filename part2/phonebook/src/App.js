@@ -2,21 +2,26 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Numbers = ({ persons }) =>{
+const Numbers = ({ persons, deletePerson }) =>{
     return(
         <div>
             <h3>Numbers</h3>
             <div>
                 {persons.map(person=>
-                    <Person key={person.name} person={person}/>
+                    <Person key={person.name} person={person} deletePerson={deletePerson}/>
                 )}
             </div>
         </div>
     )
 }
 
-const Person = ({ person }) => {
-    return <div>{person.name} {person.number}</div>
+const Person = ({ person, deletePerson }) => {
+    return( 
+        <div>
+            {person.name} {person.number}
+            <button onClick={()=>deletePerson(person)}>delete</button>
+        </div>
+    )
 }
 
 const Filter = ( props ) =>{  
@@ -93,6 +98,17 @@ const App = () => {
         ? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
         : persons
 
+    const deletePerson = (person) => {
+        const { id } = person
+        if (window.confirm(`Delete ${person.name}?`)){
+            personService
+                .destroy(id)
+                .then( () => {
+                    setPersons(persons.filter(person => person.id !== id))
+                })
+        }
+    }
+
     const addName = (event)=>{
         event.preventDefault()
         // ignore clicks if either name or number are missing
@@ -122,7 +138,7 @@ const App = () => {
             <h2>Phonebook</h2>
             <Filter handleFilterChange={handleFilterChange} filter={filter}/>
             <PersonForm addName={addName} handleNameChange={handleNameChange} newName={newName} handleNumberChange={handleNumberChange} newNumber={newNumber} />
-            <Numbers persons={personsToShow} />
+            <Numbers persons={personsToShow} deletePerson={deletePerson} />
         </div>
     )
 }
