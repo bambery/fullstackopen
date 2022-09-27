@@ -14,7 +14,43 @@ const SearchBox = ( { searchString, handleSearchChange } ) => {
         </div>
     )}
 
-// the cca3 seems to exist and be unique for each entry. Was having issues with some codes/fields not existing for certain countries
+const Weather = ({ country })=> {
+    const [ lat, lon ] = country.latlng
+    const weatherAPI = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.REACT_APP_API_KEY}`
+    const [ weather, setWeather] = useState(null)
+  
+    useEffect(()=> {
+        axios
+            .get(weatherAPI)
+            .then(response => {
+                setWeather(response.data)
+            })
+            .catch(error => {
+                console.log('error: ', error)
+            })
+    }, [])
+
+
+    return(
+        <div>
+            { weather && <WeatherDetail capital={country.capital[0]} weather={weather} /> }
+        </div>
+    )
+    
+}
+
+const WeatherDetail = ({ capital, weather }) => {
+    return(
+        <div>
+            <h2>Weather in {capital}</h2> 
+            <div>temperature {weather.main.temp} Celcius</div>
+            <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} />
+            <div>wind {weather.wind.speed} m/s</div>
+        </div>
+    )
+}
+
+// the cca3 seems to exist and be unique for each entry. 
 const Country = ({ country }) =>{
     return(
         <div>
@@ -34,24 +70,18 @@ const Country = ({ country }) =>{
             <div style={{fontSize:"8rem"}}>
                 {country.flag}
             </div>
+            <Weather country={country} />
         </div>)
 }
+
 
 const CountryListItem = ({ country, handleCountryListButtonClick}) => {
     return( 
         <div>
             <span>{country.name.common}</span>
-            <CountryListItemButton handleCountryListButtonClick={e => handleCountryListButtonClick(e, country)} country={country}/>
+            <button onClick={e => handleCountryListButtonClick(e, country)} country={country}>show</button>
         </div> 
     )
-}
-
-const CountryListItemButton = ( props ) => {
-
-   return(
-       <button onClick={props.handleCountryListButtonClick}>show</button>
-   )
-
 }
 
 const Countries = ( props ) => {
@@ -93,7 +123,7 @@ const App = () => {
                 setCountries( response.data )
             })
     }, [])
-    
+
     const handleSearchChange = (event) => {
         const search = event.target.value
         const toShow = search
