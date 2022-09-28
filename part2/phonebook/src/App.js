@@ -113,15 +113,25 @@ const App = () => {
         event.preventDefault()
         // ignore clicks if either name or number are missing
         if(!(newName && newNumber)){return}
-        // no dupe names - dupe numbers are  fine since there is often more than one person in a household
-        if( persons.find( person => person.name === newName)){
-            alert(`${newName} is already added to the phonebook`)
+
+        const person = persons.find( person => person.name === newName)
+        if(person){
+            const confirmationMessage=`${person.name} is already in the phonebook. Replace the old number (${person.number}) with a new one (${newNumber})?`
+            if( window.confirm(confirmationMessage) ){
+                const updatedPerson = {...person, number: newNumber}
+                personService
+                    .update(updatedPerson)
+                    .then(returnedPerson => {
+                        setPersons(persons.map( p => p.id !== person.id ? p : returnedPerson))
+                        setNewName('')
+                        setNewNumber('')
+                    })
+            }
         } else {
             const nameObject = {
                 name: newName,
                 number: newNumber
             }
-
             personService
                 .create(nameObject)
                 .then( returnedPerson => {
@@ -129,7 +139,6 @@ const App = () => {
                     setNewName('')
                     setNewNumber('')
                 })
-
         }
     }
 
