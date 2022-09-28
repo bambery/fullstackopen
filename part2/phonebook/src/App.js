@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const Numbers = ({ persons, deletePerson }) =>{
     return(
@@ -64,6 +65,7 @@ const PersonForm = (props) => {
 
 const App = () => {
     const [persons, setPersons] = useState([])
+    const [notification, setNotification] = useState(null)
 
     useEffect(() => {
         personService
@@ -105,6 +107,11 @@ const App = () => {
                 .destroy(id)
                 .then( () => {
                     setPersons(persons.filter(person => person.id !== id))
+                    setNotification({'message': `${person.name} has been deleted.`,'type': "alert"} )
+                })
+                .catch( e => {
+                    setNotification({'message':`${person.name} has already been removed from the server`, 'type':'error'})
+                    setPersons(persons.filter(person => person.id !== id))
                 })
         }
     }
@@ -125,6 +132,10 @@ const App = () => {
                         setPersons(persons.map( p => p.id !== person.id ? p : returnedPerson))
                         setNewName('')
                         setNewNumber('')
+                        setNotification({'message': `${returnedPerson.name} has been updated`, 'type':'alert'})
+                        setTimeout(() =>{
+                            setNotification(null)
+                        }, 5000)
                     })
             }
         } else {
@@ -138,6 +149,10 @@ const App = () => {
                     setPersons(persons.concat(returnedPerson))
                     setNewName('')
                     setNewNumber('')
+                    setNotification({'message': `${returnedPerson.name} has been added.`, 'type': 'alert'})
+                    setTimeout(() =>{
+                        setNotification(null)
+                    }, 5000)
                 })
         }
     }
@@ -145,6 +160,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification notification={notification} />
             <Filter handleFilterChange={handleFilterChange} filter={filter}/>
             <PersonForm addName={addName} handleNameChange={handleNameChange} newName={newName} handleNumberChange={handleNumberChange} newNumber={newNumber} />
             <Numbers persons={personsToShow} deletePerson={deletePerson} />
