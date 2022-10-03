@@ -68,6 +68,7 @@ const App = () => {
         // ignore clicks if either name or number are missing
         if(!(newName && newNumber)){return}
 
+        // if the person exists, update that entry instead
         const person = persons.find( person => person.name === newName)
         if(person){
             const updatedPerson = { ...person, number: newNumber}
@@ -76,6 +77,13 @@ const App = () => {
                 .then(returnedPerson => {
                     setPersons(persons.map( p => p.id !== person.id ? p : returnedPerson))
                     setNotification({'message': `${returnedPerson.name} has been updated`, 'type':'alert'})
+                    setTimeout(() =>{
+                        setNotification(null)
+                    }, 5000)
+                })
+                .catch(error => {
+                    console.log(error)
+                    setNotification({'message': error.response.data.error, 'type': 'error'})
                     setTimeout(() =>{
                         setNotification(null)
                     }, 5000)
@@ -92,6 +100,13 @@ const App = () => {
                     setNewName('')
                     setNewNumber('')
                     setNotification({'message': `${returnedPerson.name} has been added.`, 'type': 'alert'})
+                    setTimeout(() =>{
+                        setNotification(null)
+                    }, 5000)
+                })
+                .catch(error => {
+                    console.log(error.response.data.error)
+                    setNotification({'message': error.response.data.error, 'type': 'error'})
                     setTimeout(() =>{
                         setNotification(null)
                     }, 5000)
