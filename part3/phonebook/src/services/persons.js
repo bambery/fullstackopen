@@ -15,14 +15,10 @@ const destroy = id => {
     const request = axios.delete(`${baseUrl}/${id}`)
     return request.then(response => response.data)
 }
- /*
-  **** exercise 3.9 says PUT/updates will be implemented in exercise 3.17
-  *
+
 const update = updatedPerson => {
     const request = axios.put(`${baseUrl}/${updatedPerson.id}`, updatedPerson)
     return request.then(response => response.data)
 }
-*/
 
-//export default { getAll, create, destroy, update }
-export default { getAll, create, destroy }
+export default { getAll, create, destroy, update }

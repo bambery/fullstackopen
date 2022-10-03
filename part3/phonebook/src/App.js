@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
 import Notification from './components/Notification'
 import NumberList from './components/NumberList'
-import Person from './components/Person'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 
@@ -51,6 +49,9 @@ const App = () => {
                 .then( () => {
                     setPersons(persons.filter(person => person.id !== id))
                     setNotification({'message': `${person.name} has been deleted.`,'type': "alert"} )
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
                 })
                 .catch( e => {
                     setNotification({'message':`${person.name} has already been removed from the server`, 'type':'error'})
@@ -69,36 +70,23 @@ const App = () => {
 
         const person = persons.find( person => person.name === newName)
         if(person){
-            /*
-            **** exercise 3.9 says PUT/updates will be implemented in exercise 3.17
-            *
-            const confirmationMessage=`${person.name} is already in the phonebook. Replace the old number (${person.number}) with a new one (${newNumber})?`
-            if( window.confirm(confirmationMessage) ){
-                const updatedPerson = {...person, number: newNumber}
-                personService
-                    .update(updatedPerson)
-                    .then(returnedPerson => {
-                        setPersons(persons.map( p => p.id !== person.id ? p : returnedPerson))
-                        setNewName('')
-                        setNewNumber('')
-                        setNotification({'message': `${returnedPerson.name} has been updated`, 'type':'alert'})
-                        setTimeout(() =>{
-                            setNotification(null)
-                        }, 5000)
-                    })
-            }
-            */
-            setNotification( {'message': `${person.name} is already in the phonebook`, 'type': 'error'})
-            setTimeout(()=> {
-                setNotification(null)
-            }, 5000)
+            const updatedPerson = { ...person, number: newNumber}
+            personService
+                .update(updatedPerson)
+                .then(returnedPerson => {
+                    setPersons(persons.map( p => p.id !== person.id ? p : returnedPerson))
+                    setNotification({'message': `${returnedPerson.name} has been updated`, 'type':'alert'})
+                    setTimeout(() =>{
+                        setNotification(null)
+                    }, 5000)
+                })
         } else {
-            const nameObject = {
+            const personObject = {
                 name: newName,
                 number: newNumber
             }
             personService
-                .create(nameObject)
+                .create(personObject)
                 .then( returnedPerson => {
                     setPersons(persons.concat(returnedPerson))
                     setNewName('')
