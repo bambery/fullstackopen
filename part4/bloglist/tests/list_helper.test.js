@@ -78,7 +78,7 @@ describe('author with most blogs', () => {
             blogs: 3
         }
         const result = listHelper.mostBlogs(listMocks.listWithManyBlogs)
-        expect(result.blogs).toEqual(mostBlogs.blogs)
+        expect(result).toEqual(mostBlogs)
     })
 
     test('of a list where there is no clear winner, return one tied for # of blog posts', () => {
@@ -88,5 +88,28 @@ describe('author with most blogs', () => {
         }
         const result = listHelper.mostBlogs(listMocks.listWithSeveralAuthorsWith2Blogs)
         expect(result.blogs).toEqual(mostBlogs.blogs)
+    })
+})
+
+describe('author with most likes across all blogs', () => {
+    // this behavior is not described by the exercises so I am guessing
+    test('given an empty list, returns null', () => {
+        expect( listHelper.mostLikes([])).toBe(null)
+    })
+
+    test('of a list with a clear winner, return the author and like count', () => {
+        const mostLikes = {
+            author: "Edsger W. Dijkstra",
+            likes: 17
+        }
+        expect(listHelper.mostLikes(listMocks.listWithManyBlogs)).toEqual(mostLikes)
+    })
+
+    test('given a list with more than one author with the max # of likes, return one of them', () => {
+        const mostLikes = {
+            author: "Edsger W. Dijkstra",
+            likes: 15
+        }
+        expect(listHelper.mostLikes(listMocks.listWithAuthorsSameNumLikes).likes).toBe(mostLikes.likes)
     })
 })

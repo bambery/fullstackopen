@@ -34,9 +34,26 @@ const mostBlogs = (blogs) => {
     return { author: maxBlogs, blogs: authorCount[maxBlogs] }
 }
 
+const mostLikes = (blogs) => {
+    // behavior is not described for blogs being empty so I am guessing
+    if(blogs.length === 0){ return null }
+
+    const reducer = ( acc, curr ) => {
+        acc[curr.author] = acc[curr.author]
+            ? acc[curr.author] + Number(curr.likes)
+            : Number(curr.likes)
+        return acc
+    }
+
+    const likeCount = blogs.reduce(reducer, {})
+    const maxLikes = _.maxBy(Object.keys(likeCount), likes => likeCount[likes])
+    return { author: maxLikes, likes: likeCount[maxLikes] }
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
     mostBlogs,
+    mostLikes,
 }
