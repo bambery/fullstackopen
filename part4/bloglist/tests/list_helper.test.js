@@ -26,6 +26,10 @@ describe('total likes', () => {
 })
 
 describe('favorite blog', () => {
+    test('when the list of blogs is empty, get back null', () => {
+        expect( listHelper.favoriteBlog([])).toBe(null)
+    })
+
     test('when list has only one blog, return that blog', () => {
         // the exercise I could return a reduced object, but why? Why not return the entire blog object?
         const result = listHelper.favoriteBlog(listMocks.listWithOneBlog)
@@ -49,8 +53,8 @@ describe('favorite blog', () => {
         expect(result).toEqual(mostLikes)
     })
 
-    test('of a bigger list with more than one that has the most likes, return one of those tied for most likes - in this case, the sequentially last one in the arr', () => {
-    const mostLikes = {
+    test('of a bigger list with more than one that has the most likes, return one of those tied for most likes', () => {
+        const mostLikes = {
             id: "5a422ba71b54a676234d17fb",
             title: "TDD harms architecture",
             author: "Robert C. Martin",
@@ -58,6 +62,31 @@ describe('favorite blog', () => {
             likes: 12,
         }
         const result = listHelper.favoriteBlog(listMocks.listWithManyBlogsAndTiedForLikes)
-        expect(result).toEqual(mostLikes)
+        expect(result.likes).toEqual(mostLikes.likes)
+    })
+})
+
+describe('author with most blogs', () => {
+    // this behavior is not described by the exercises so I am guessing
+    test('given an empty list, returns null', () => {
+        expect( listHelper.mostBlogs([])).toBe(null)
+    })
+
+    test('of a bigger list with a clear winner, return that one', () => {
+        const mostBlogs = {
+            author: "Robert C. Martin",
+            blogs: 3
+        }
+        const result = listHelper.mostBlogs(listMocks.listWithManyBlogs)
+        expect(result.blogs).toEqual(mostBlogs.blogs)
+    })
+
+    test('of a list where there is no clear winner, return one tied for # of blog posts', () => {
+        const mostBlogs = {
+            author: "Robert C. Martin",
+            blogs: 2
+        }
+        const result = listHelper.mostBlogs(listMocks.listWithSeveralAuthorsWith2Blogs)
+        expect(result.blogs).toEqual(mostBlogs.blogs)
     })
 })
