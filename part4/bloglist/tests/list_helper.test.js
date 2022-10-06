@@ -1,13 +1,6 @@
 const listHelper = require('../utils/list_helper')
 const listMocks  = require('./list_helper_test_cases')
 
-test('dummy returns one', () => {
-    const blogs = []
-
-    const result = listHelper.dummy(blogs)
-    expect(result).toBe(1)
-})
-
 describe('total likes', () => {
 
     test('of an empty list is zero', () => {
@@ -43,10 +36,10 @@ describe('favorite blog', () => {
 
     test('of a bigger list with one that has the most likes, return that one', () => {
         const mostLikes = {
-            id: "5a422b3a1b54a676234d17f9",
-            title: "Canonical string reduction",
-            author: "Edsger W. Dijkstra",
-            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            id: '5a422b3a1b54a676234d17f9',
+            title: 'Canonical string reduction',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
             likes: 12,
         }
         const result = listHelper.favoriteBlog(listMocks.listWithManyBlogs)
@@ -55,10 +48,10 @@ describe('favorite blog', () => {
 
     test('of a bigger list with more than one that has the most likes, return one of those tied for most likes', () => {
         const mostLikes = {
-            id: "5a422ba71b54a676234d17fb",
-            title: "TDD harms architecture",
-            author: "Robert C. Martin",
-            url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+            id: '5a422ba71b54a676234d17fb',
+            title: 'TDD harms architecture',
+            author: 'Robert C. Martin',
+            url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
             likes: 12,
         }
         const result = listHelper.favoriteBlog(listMocks.listWithManyBlogsAndTiedForLikes)
@@ -74,7 +67,7 @@ describe('author with most blogs', () => {
 
     test('of a bigger list with a clear winner, return that one', () => {
         const mostBlogs = {
-            author: "Robert C. Martin",
+            author: 'Robert C. Martin',
             blogs: 3
         }
         const result = listHelper.mostBlogs(listMocks.listWithManyBlogs)
@@ -83,7 +76,7 @@ describe('author with most blogs', () => {
 
     test('of a list where there is no clear winner, return one tied for # of blog posts', () => {
         const mostBlogs = {
-            author: "Robert C. Martin",
+            author: 'Robert C. Martin',
             blogs: 2
         }
         const result = listHelper.mostBlogs(listMocks.listWithSeveralAuthorsWith2Blogs)
@@ -99,7 +92,7 @@ describe('author with most likes across all blogs', () => {
 
     test('of a list with a clear winner, return the author and like count', () => {
         const mostLikes = {
-            author: "Edsger W. Dijkstra",
+            author: 'Edsger W. Dijkstra',
             likes: 17
         }
         expect(listHelper.mostLikes(listMocks.listWithManyBlogs)).toEqual(mostLikes)
@@ -107,7 +100,7 @@ describe('author with most likes across all blogs', () => {
 
     test('given a list with more than one author with the max # of likes, return one of them', () => {
         const mostLikes = {
-            author: "Edsger W. Dijkstra",
+            author: 'Edsger W. Dijkstra',
             likes: 15
         }
         expect(listHelper.mostLikes(listMocks.listWithAuthorsSameNumLikes).likes).toBe(mostLikes.likes)
