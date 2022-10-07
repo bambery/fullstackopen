@@ -29,6 +29,28 @@ describe('blogs api', () => {
         expect(response.body[0]).toBeDefined()
     })
 
+    test('a valid blog can be added', async () => {
+        const newBlog = {
+            title: 'Cryptocurrency-enabled Crime',
+            author: 'David Rosenthal',
+            url: 'https://blog.dshr.org/2022/09/cryptocurrency-enabled-crime.html',
+            likes: 6
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await tc.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(tc.listWithManyBlogs.length + 1)
+        const contents = blogsAtEnd.map( b => b.title )
+        expect(contents).toContain(
+            'Cryptocurrency-enabled Crime'
+        )
+    })
+
 })
 
 afterAll(() => {
