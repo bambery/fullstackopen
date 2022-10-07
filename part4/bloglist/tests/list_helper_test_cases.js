@@ -2,7 +2,7 @@ const Blog = require('../models/blog')
 // I glanced at jest factories but since the tuts don't seem to cover them, I'll just put them in this file for now to get them out of the way.
 
 const blogsInDb = async () => {
-    const blogs = await api.get('/api/blogs/')
+    const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
 }
 

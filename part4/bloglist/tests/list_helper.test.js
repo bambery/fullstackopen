@@ -36,7 +36,6 @@ describe('favorite blog', () => {
 
     test('of a bigger list with one that has the most likes, return that one', () => {
         const mostLikes = {
-//            id: '5a422b3a1b54a676234d17f9',
             title: 'Canonical string reduction',
             author: 'Edsger W. Dijkstra',
             url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
@@ -48,7 +47,6 @@ describe('favorite blog', () => {
 
     test('of a bigger list with more than one that has the most likes, return one of those tied for most likes', () => {
         const mostLikes = {
-//            id: '5a422ba71b54a676234d17fb',
             title: 'TDD harms architecture',
             author: 'Robert C. Martin',
             url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
