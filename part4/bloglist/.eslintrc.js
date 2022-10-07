@@ -14,7 +14,8 @@ module.exports = {
     'rules': {
         'indent': [
             'error',
-            4
+            4,
+            { 'ignoreComments': true }
         ],
         'linebreak-style': [
             'error',
