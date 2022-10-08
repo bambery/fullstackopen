@@ -105,6 +105,16 @@ describe('blogs api', () => {
             expect(blogsAtEnd).toHaveLength(tc.listWithManyBlogs.length)
         })
     })
+
+    describe('deleting a blog', () => {
+        test('succeeds with status code 204 if id is valid', async () => {
+            const blogsAtStart = await tc.blogsInDb()
+            const blogToDelete = blogsAtStart[0]
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(204)
+        })
+    })
 })
 
 afterAll(() => {
