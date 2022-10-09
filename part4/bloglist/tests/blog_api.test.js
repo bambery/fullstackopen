@@ -113,6 +113,30 @@ describe('blogs api', () => {
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
                 .expect(204)
+
+            const blogsAtEnd = await tc.blogsInDb()
+            expect(blogsAtEnd.length).toBe(blogsAtStart.length - 1)
+        })
+    })
+
+    describe('updating an existing blog', () => {
+        test('to change the like count', async () => {
+            const blogsAtStart = await tc.blogsInDb()
+            const blogToUpdate = blogsAtStart[0]
+            console.log(`blog to update: ${blogToUpdate.toJSON}`)
+            const blogObjectUpdateLikes = {
+                likes: blogToUpdate.likes + 1,
+            }
+
+            await api
+                .put(`/api/blogs/${blogToUpdate.id}`)
+                .send(blogObjectUpdateLikes)
+                .expect(200)
+
+            const blogsAtEnd = await tc.blogsInDb()
+            const updatedBlog = blogsAtEnd.find( blog => blog.id === blogToUpdate.id)
+            console.log(`blog had been updated: ${updatedBlog}`)
+            expect(updatedBlog.likes).toBe(blogToUpdate.likes + 1)
         })
     })
 })
