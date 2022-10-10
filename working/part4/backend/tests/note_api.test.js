@@ -43,7 +43,7 @@ describe('notes api', () => {
             const noteToView = notesAtStart[0]
 
             const resultNote = await api
-                .get(`/api/notes/${notesToView.id}`)
+                .get(`/api/notes/${noteToView.id}`)
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
 
@@ -53,7 +53,7 @@ describe('notes api', () => {
         })
 
         test('fails with statuscode 404 if note does not exist', async () => {
-            const validNoneixstingId = await helper.nonExistingId()
+            const validNonexistingId = await helper.nonExistingId()
 
             console.log(validNonexistingId)
 
