@@ -15,7 +15,6 @@ describe('notes api', () => {
     describe('when there are existing notes', () => {
 
         test('notes are returned as json', async () => {
-            console.log('entered text')
             await api
                 .get('/api/notes')
                 .expect(200)
@@ -54,8 +53,6 @@ describe('notes api', () => {
 
         test('fails with statuscode 404 if note does not exist', async () => {
             const validNonexistingId = await helper.nonExistingId()
-
-            console.log(validNonexistingId)
 
             await api
                 .get(`/api/notes/${validNonexistingId}`)
