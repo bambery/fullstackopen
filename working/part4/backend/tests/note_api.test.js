@@ -6,6 +6,14 @@ const helper = require('./test_helper')
 
 const Note = require('../models/note')
 
+// the material does not discuss how to mock out authentication/authorization so I'm going to try this. I'm sure later the course will use mock-jwks or some other package
+const TEST_PASS = 'losenord'
+const TEST_USERNAME = 'testUser'
+
+beforeAll(async () => {
+    users = await helper.createTestUser(TEST_USERNAME, TEST_PASS)
+})
+
 beforeEach(async () => {
     await Note.deleteMany({})
     await Note.insertMany(helper.initialNotes)
@@ -69,10 +77,15 @@ describe('notes api', () => {
     })
 
     describe('the addition of a new note', () => {
+        beforeAll(async () => {
+        })
+
         test('succeeds with valid data', async () => {
+
             const newNote = {
                 content: 'async/await simplifies making async calls',
                 important: true,
+                userId: 
             }
 
             await api
