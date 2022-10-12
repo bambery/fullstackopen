@@ -5,6 +5,7 @@ const api = supertest(app)
 const helper = require('./test_helper')
 
 const Note = require('../models/note')
+const User = require('../models/user')
 
 // the material does not discuss how to mock out authentication/authorization so I'm going to try this. I'm sure later the course will use mock-jwks or some other package
 const TEST_PASS = 'losenord'
@@ -77,19 +78,18 @@ describe('notes api', () => {
     })
 
     describe('the addition of a new note', () => {
-        beforeAll(async () => {
-        })
-
         test('succeeds with valid data', async () => {
-
+            const user = await User.findOne({ username:TEST_USERNAME })
+            const userToken = await helper.logUserIn(user.username, user.id)
             const newNote = {
-                content: 'async/await simplifies making async calls',
+                content: 'a successful test note',
                 important: true,
-                userId: 
+                userId: user.id
             }
 
             await api
                 .post('/api/notes')
+                .set('Authorization', `bearer ${userToken}`)
                 .send(newNote)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -99,17 +99,43 @@ describe('notes api', () => {
 
             const contents = notesAtEnd.map(n => n.content)
             expect(contents).toContain(
-                'async/await simplifies making async calls'
+                'a successful test note'
             )
         })
 
-        test('fails with status code 400 if missing required info', async () => {
+        test('fails with status code 401 if user is not properly logged in', async () => {
+            const user = await User.findOne({ username:TEST_USERNAME })
+            let userToken = await helper.logUserIn(user.username, user.id)
+            userToken = userToken.substring(0, userToken.length - 3).concat('aaa')
+
             const newNote = {
-                important: true
+                content: 'this user has an incorrect token',
+                important: true,
+                userId: user.id
             }
 
             await api
                 .post('/api/notes')
+                .set('Authorization', `bearer ${userToken}`)
+                .send(newNote)
+                .expect(401)
+
+            const notesAtEnd = await helper.notesInDb()
+
+            expect(notesAtEnd).toHaveLength(helper.initialNotes.length)
+        })
+
+        test('fails with status code 400 if missing required info', async () => {
+            const user = await User.findOne({ username:TEST_USERNAME })
+            const userToken = await helper.logUserIn(user.username, user.id)
+            const newNote = {
+                important: true,
+                userId: user.id
+            }
+
+            await api
+                .post('/api/notes')
+                .set('Authorization', `bearer ${userToken}`)
                 .send(newNote)
                 .expect(400)
 

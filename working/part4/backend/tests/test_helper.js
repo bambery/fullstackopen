@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const Note = require('../models/note')
 const User = require('../models/user')
 
@@ -31,6 +32,23 @@ const createTestUser = async (testUsername, testPass) => {
     return savedUser.toJSON
 }
 
+// returns login token
+// fso why did you tell me this was an exercise for the reader? Am I supposed to look ahead to find out how you solve this for your tests?
+const logUserIn = async (username, userId) => {
+    const userForToken = {
+        username: username,
+        id: userId
+    }
+
+    const token = jwt.sign(
+        userForToken,
+        process.env.SECRET,
+        { expiresIn: 60*60 }
+    )
+
+    return token
+}
+
 const nonExistingId = async () => {
     const note = new Note({ content: 'willremovethissoon', date: new Date() })
     await note.save()
@@ -55,4 +73,5 @@ module.exports = {
     notesInDb,
     usersInDb,
     createTestUser,
+    logUserIn,
 }
