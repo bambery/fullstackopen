@@ -1,5 +1,5 @@
 const listHelper = require('../utils/list_helper')
-const listMocks  = require('./list_helper_test_cases')
+const listMocks  = require('./test_helper')
 
 describe('total likes', () => {
 
