@@ -15,6 +15,11 @@ describe('users api with one existing user in db', () => {
 
         await user.save()
     })
+
+    afterAll(() => {
+        mongoose.connection.close()
+    })
+
     describe('creating a new user', () => {
         test('creation succeeds with proper inputs', async () => {
             const usersAtStart = await helper.usersInDb()
@@ -138,3 +143,5 @@ describe('users api with one existing user in db', () => {
         })
     })
 })
+
+

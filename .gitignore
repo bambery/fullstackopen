@@ -27,5 +27,6 @@ yarn-error.log*
 *.swo
 *.swp
 
-# repos used during lessons
+# used during lessons
 #working
+part4/bloglist/models/user.old.js

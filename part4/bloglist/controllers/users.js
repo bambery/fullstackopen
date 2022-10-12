@@ -8,7 +8,7 @@ usersRouter.post('/', async (request, response) => {
 
     if(!password) {
         return response.status(400).json({
-            error: `User validation failed: password is required.`
+            error: 'User validation failed: password is required.'
         })
     } else if(password.length < minPassLen) {
         return response.status(400).json({
