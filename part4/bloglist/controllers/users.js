@@ -4,6 +4,17 @@ const User = require('../models/user')
 
 usersRouter.post('/', async (request, response) => {
     const { username, name, password } = request.body
+    const minPassLen = 3
+
+    if(!password) {
+        return response.status(400).json({
+            error: `User validation failed: password is required.`
+        })
+    } else if(password.length < minPassLen) {
+        return response.status(400).json({
+            error: `User validation failed: password is shorter than the minimum allowed length (${minPassLen}).`
+        })
+    }
 
     const existingUser = await User.findOne({ username })
     if (existingUser) {
