@@ -1,5 +1,7 @@
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
 
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
@@ -11,10 +13,22 @@ const usersInDb = async () => {
     return users.map( u => u.toJSON())
 }
 
+const populateOneUser = async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('skret', 10)
+    const user = new User({ username: 'testUser', name: 'One Test User',  passwordHash })
+
+    await user.save()
+}
+
 const populateBlogs = async ( kind = listWithManyBlogs ) => {
     await Blog.deleteMany({})
+    await populateOneUser()
+    const users = await usersInDb()
 
     for (let blog of kind) {
+        blog.user = users[0].id
         let blogObject = new Blog(blog)
         await blogObject.save()
     }
@@ -208,6 +222,7 @@ module.exports = {
     blogsInDb,
     usersInDb,
     populateBlogs,
+    populateOneUser,
     listWithOneBlog,
     listWithManyBlogs,
     listWithManyBlogsAndTiedForLikes,
