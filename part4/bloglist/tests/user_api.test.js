@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt')
-const User = require('../models/user')
 const helper = require('./test_helper')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -8,12 +6,7 @@ const api = supertest(app)
 
 describe('users api with one existing user in db', () => {
     beforeEach(async () => {
-        await User.deleteMany({})
-
-        const passwordHash = await bcrypt.hash('skret', 10)
-        const user = new User({ username: 'testUser', passwordHash })
-
-        await user.save()
+        await helper.populateOneUser()
     })
 
     afterAll(() => {
@@ -141,6 +134,16 @@ describe('users api with one existing user in db', () => {
             const usersAtEnd = await helper.usersInDb()
             expect(usersAtEnd).toEqual(usersAtStart)
         })
+
+    })
+
+    test('existing User is returned with list of their blog posts', async () => {
+        const usersAtStart = await helper.usersInDb()
+        helper.populateBlogs()
+        const numBlogs = helper.blogsInDb.length
+
+        const user = usersAtStart[0]
+        expect(user.blogs).toHaveLength(numBlogs)
     })
 })
 
