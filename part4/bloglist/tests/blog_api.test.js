@@ -8,12 +8,12 @@ const api = supertest(app)
 
 
 describe('blogs api', () => {
+    beforeAll(async () => {
+        await helper.populateOneUser()
+        await helper.populateBlogs()
+    })
+
     describe('getting existing blogs', () => {
-        // populate test db with one test user and many test blogs
-        beforeAll(async () => {
-            await helper.populateOneUser()
-            await helper.populateBlogs()
-        })
 
         test('blogs are returned as json', async () => {
             await api
@@ -22,21 +22,13 @@ describe('blogs api', () => {
                 .expect('Content-Type', /application\/json/)
         })
 
-        test.only('all blogs are returned', async () => {
+        test('all blogs are returned', async () => {
             const response = await api.get('/api/blogs/')
-            //console.log(response)
             expect(response.body).toHaveLength(helper.listWithManyBlogs.length)})
 
         test('blogs are uniquely identified by "id"', async () => {
             const response = await api.get('/api/blogs')
-            //console.log(response)
             expect(response.body[0].id).toBeDefined()
-        })
-
-        test('returns the user who create the blog post', async () => {
-            const response = await api.get('/api/blogs/')
-            expect(response.body[0].user.username).toBeDefined()
-            expect(response.body[0].user.id).toBeDefined()
         })
     })
 
@@ -48,7 +40,8 @@ describe('blogs api', () => {
         })
 
         test('a valid blog can be added', async () => {
-            const user = await User
+            const user = await User.findOne({ username: helper.TEST_USERNAME1 })
+            const userToken = await helper.logUserIn(user.username, user.id)
             const newBlog = {
                 title: 'Cryptocurrency-enabled Crime',
                 author: 'David Rosenthal',
@@ -58,6 +51,7 @@ describe('blogs api', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `bearer ${userToken}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -70,9 +64,36 @@ describe('blogs api', () => {
             )
         })
 
+        test('a valid blog is associated with the User who created it', async () => {
+
+            const user = await User.findOne({ username: helper.TEST_USERNAME2 })
+            const userToken = await helper.logUserIn(user.username, user.id)
+            const newBlog = {
+                title: 'Abusing HTTP hop-by-hop request headers',
+                author: 'Nathan Davison',
+                url: 'https://nathandavison.com/blog/abusing-http-hop-by-hop-request-headers',
+                likes: 2
+            }
+
+            await api
+                .post('/api/blogs')
+                .set('Authorization', `bearer ${userToken}`)
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+
+            // note that blogsInDb does not pass through the controller and thus does not populate the User, but it does retain the user's id
+            const blogsAtEnd = await helper.blogsInDb()
+            const blog = blogsAtEnd.find(blog => blog.title === 'Abusing HTTP hop-by-hop request headers' )
+
+            expect(JSON.stringify(blog.user).replaceAll('\"', '')).toBe(user.id)
+        })
+
         describe('missing submission properties', () => {
-            // exercise 4.11
-            test('blog created without likes will have zero likes', async () => {
+
+            test('blog created without likes is successful and will have zero likes', async () => {
+                const user = await User.findOne({ username: helper.TEST_USERNAME2 })
+                const userToken = await helper.logUserIn(user.username, user.id)
                 const blogObject = {
                     title: 'Emanuel Derman\'s Apologia Pro Vita Sua',
                     author: 'Cathy O\'Neil',
@@ -81,6 +102,7 @@ describe('blogs api', () => {
 
                 await api
                     .post('/api/blogs')
+                    .set('Authorization', `bearer ${userToken}`)
                     .send(blogObject)
                     .expect(201)
                     .expect('Content-Type', /application\/json/)
@@ -91,8 +113,9 @@ describe('blogs api', () => {
                 expect(newBlog.likes).toBe(0)
             })
 
-            // exercise 4.12
-            test('blog missing title is not added', async () => {
+            test('blog missing title is not created', async () => {
+                const user = await User.findOne({ username: helper.TEST_USERNAME2 })
+                const userToken = await helper.logUserIn(user.username, user.id)
                 const blogObjectNoTitle = {
                     author: 'Ashley Carman and Davey Alba',
                     url: 'https://www.bloomberg.com/news/articles/2022-10-06/podcasts-spur-listeners-to-swamp-health-workers-with-angry-calls',
@@ -100,6 +123,7 @@ describe('blogs api', () => {
 
                 await api
                     .post('/api/blogs')
+                    .set('Authorization', `bearer ${userToken}`)
                     .send(blogObjectNoTitle)
                     .expect(400)
 
@@ -107,8 +131,9 @@ describe('blogs api', () => {
                 expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length)
             })
 
-            // exercise 4.12
-            test('blog missing url is not added', async () => {
+            test('blog missing url is not created', async () => {
+                const user = await User.findOne({ username: helper.TEST_USERNAME2 })
+                const userToken = await helper.logUserIn(user.username, user.id)
                 const blogObjectNoUrl = {
                     title: 'Health-Care Workers Are Swamped Again, This Time With Angry Calls From Podcast Listeners',
                     author: 'Ashley Carman and Davey Alba',
@@ -116,14 +141,20 @@ describe('blogs api', () => {
 
                 await api
                     .post('/api/blogs')
+                    .set('Authorization', `bearer ${userToken}`)
                     .send(blogObjectNoUrl)
                     .expect(400)
 
                 const blogsAtEnd = await helper.blogsInDb()
                 expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length)
             })
+
+            test('creation fails if user is not authenticated', async ()=> {
+                //todo
+            })
         })
     })
+
     describe('deleting a blog', () => {
         test('succeeds with status code 204 if id is valid', async () => {
             const blogsAtStart = await helper.blogsInDb()
@@ -141,7 +172,6 @@ describe('blogs api', () => {
         test('to change the like count', async () => {
             const blogsAtStart = await helper.blogsInDb()
             const blogToUpdate = blogsAtStart[0]
-            console.log(`blog to update: ${blogToUpdate.toJSON}`)
             const blogObjectUpdateLikes = {
                 likes: blogToUpdate.likes + 1,
             }
@@ -153,7 +183,6 @@ describe('blogs api', () => {
 
             const blogsAtEnd = await helper.blogsInDb()
             const updatedBlog = blogsAtEnd.find( blog => blog.id === blogToUpdate.id)
-            console.log(`blog had been updated: ${updatedBlog}`)
             expect(updatedBlog.likes).toBe(blogToUpdate.likes + 1)
         })
     })

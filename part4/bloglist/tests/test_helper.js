@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const TEST_USERNAME1 = 'testUser1'
+const TEST_USERNAME2 = 'testUser2'
+
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
@@ -17,7 +20,7 @@ const populateOneUser = async () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('skret', 10)
-    const user = new User({ username: 'testUser', name: 'One Test User',  passwordHash })
+    const user = new User({ username: TEST_USERNAME1, name: 'One Test User',  passwordHash })
 
     await user.save()
 }
@@ -26,23 +29,37 @@ const populateTwoUsers = async () => {
     await User.deleteMany({})
 
     const twoUsers = [{
-        username: 'testUser1',
-        name: 'Test User 1',
+        username: TEST_USERNAME1,
+        name: 'Test User 1 of 2',
         pass: 'skret'
     },
     {
-        username: 'testUser2',
-        name: 'Test User 2',
+        username: TEST_USERNAME2,
+        name: 'Test User 2 of 2',
         pass: 'skret'
     }]
 
     for( let user of twoUsers ) {
         const passwordHash = await bcrypt.hash(user.pass, 10)
-        const User = new User({ userename: user.username, name: user.name, passwordHash })
-        await User.save()
+        const newUser = new User({ username: user.username, name: user.name, passwordHash })
+        await newUser.save()
     }
 }
 
+const logUserIn = async (username, userId) => {
+    const userForToken = {
+        username: username,
+        id: userId
+    }
+
+    const token = jwt.sign(
+        userForToken,
+        process.env.SECRET,
+        { expiresIn: 60*60 }
+    )
+
+    return token
+}
 
 // this helper method expects you to have already created users. Users will be looped through to create blogs
 const populateBlogs = async ( kind = listWithManyBlogs ) => {
@@ -245,11 +262,14 @@ const listWithSeveralAuthorsWith2Blogs = [
     },
 ]
 module.exports = {
+    TEST_USERNAME1,
+    TEST_USERNAME2,
     blogsInDb,
     usersInDb,
     populateBlogs,
     populateOneUser,
     populateTwoUsers,
+    logUserIn,
     listWithOneBlog,
     listWithManyBlogs,
     listWithManyBlogsAndTiedForLikes,
