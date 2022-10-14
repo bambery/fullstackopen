@@ -2,42 +2,53 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
+const User = require('../models/user')
 
 const api = supertest(app)
 
-beforeEach(async () => {
-    await helper.populateOneUser()
-    await helper.populateBlogs()
-})
 
 describe('blogs api', () => {
-    test('blogs are returned as json', async () => {
-        await api
-            .get('/api/blogs')
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
-    })
+    describe('getting existing blogs', () => {
+        // populate test db with one test user and many test blogs
+        beforeAll(async () => {
+            await helper.populateOneUser()
+            await helper.populateBlogs()
+        })
 
-    // exercise 4.8
-    test('all blogs are returned', async () => {
-        const response = await api.get('/api/blogs/')
-        expect(response.body).toHaveLength(helper.listWithManyBlogs.length)})
+        test('blogs are returned as json', async () => {
+            await api
+                .get('/api/blogs')
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+        })
 
-    // exercise 4.9
-    test('blogs are uniquely identified by "id"', async () => {
-        const response = await api.get('/api/blogs')
-        expect(response.body[0].id).toBeDefined()
-    })
+        test.only('all blogs are returned', async () => {
+            const response = await api.get('/api/blogs/')
+            //console.log(response)
+            expect(response.body).toHaveLength(helper.listWithManyBlogs.length)})
 
-    test('returns the user who create the blog post', async () => {
-        const response = await api.get('/api/blogs/')
-        expect(response.body[0].user.username).toBeDefined()
-        expect(response.body[0].user.id).toBeDefined()
+        test('blogs are uniquely identified by "id"', async () => {
+            const response = await api.get('/api/blogs')
+            //console.log(response)
+            expect(response.body[0].id).toBeDefined()
+        })
+
+        test('returns the user who create the blog post', async () => {
+            const response = await api.get('/api/blogs/')
+            expect(response.body[0].user.username).toBeDefined()
+            expect(response.body[0].user.id).toBeDefined()
+        })
     })
 
     describe('creating Blogs', () => {
-        // exercise 4.10
+        beforeEach(async () => {
+            await helper.populateTwoUsers()
+            await helper.populateBlogs()
+
+        })
+
         test('a valid blog can be added', async () => {
+            const user = await User
             const newBlog = {
                 title: 'Cryptocurrency-enabled Crime',
                 author: 'David Rosenthal',
