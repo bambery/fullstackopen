@@ -3,17 +3,21 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const User = require('../models/user')
+const Blog = require('../models/blog')
 
-describe('users api with one existing user in db', () => {
-    beforeEach(async () => {
-        await helper.populateOneUser()
-    })
+describe('users api', () => {
 
     afterAll(() => {
         mongoose.connection.close()
     })
 
     describe('creating a new user', () => {
+
+        beforeEach(async () => {
+            await helper.populateOneUser()
+        })
+
         test('creation succeeds with proper inputs', async () => {
             const usersAtStart = await helper.usersInDb()
 
@@ -39,7 +43,7 @@ describe('users api with one existing user in db', () => {
             const usersAtStart = await helper.usersInDb()
 
             const userObject = {
-                username: 'testUser',
+                username: helper.TEST_USERNAME1,
                 password: 'salainen',
             }
 
@@ -135,15 +139,53 @@ describe('users api with one existing user in db', () => {
             expect(usersAtEnd).toEqual(usersAtStart)
         })
 
+
     })
 
-    test('existing User is returned with list of their blog posts', async () => {
-        const usersAtStart = await helper.usersInDb()
-        helper.populateBlogs()
-        const numBlogs = helper.blogsInDb.length
+    describe('fetching existing users', () => {
+        test('existing User is returned with list of their blog posts', async () => {
+            await User.deleteMany({})
+            await Blog.deleteMany({})
+            await helper.populateOneUser()
 
-        const user = usersAtStart[0]
-        expect(user.blogs).toHaveLength(numBlogs)
+            const user = await User.findOne({ username: helper.TEST_USERNAME1 })
+            const userToken = await helper.logUserIn(user.username, user.id)
+            const newBlog = {
+                title: 'new blog 1',
+                author: 'new author 1',
+                url: 'https://www.google.com',
+                likes: 0
+            }
+
+            await api
+                .post('/api/blogs')
+                .set('Authorization', `bearer ${userToken}`)
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+
+            const newBlog2 = {
+                title: 'new blog 2',
+                author: 'new author 1',
+                url: 'https://www.google.com',
+                likes: 10
+            }
+
+            await api
+                .post('/api/blogs')
+                .set('Authorization', `bearer ${userToken}`)
+                .send(newBlog2)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+
+            const response = await api
+                .get(`/api/users/`)
+            const userResponse = response.body.find( u => u.id === user.id )
+            expect(userResponse.blogs).toHaveLength(2)
+            const contents = userResponse.blogs.map( b => b.title )
+            expect(contents).toContain('new blog 1')
+            expect(contents).toContain( 'new blog 2')
+        }, 10000)
     })
 })
 
