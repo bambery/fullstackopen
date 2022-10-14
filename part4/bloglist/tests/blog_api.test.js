@@ -150,7 +150,25 @@ describe('blogs api', () => {
             })
 
             test('creation fails if user is not authenticated', async ()=> {
-                //todo
+                const user = await User.findOne({ username:helper.TEST_USERNAME1 })
+                let userToken = await helper.logUserIn(user.username, user.id)
+                userToken = userToken.substring(0, userToken.length - 3).concat('aaa')
+
+                const blogObject = {
+                    title: 'this user has an incorrect token',
+                    url: 'https://www.dne.com',
+                    userId: user.id
+                }
+
+                await api
+                    .post('/api/blogs')
+                    .set('Authorization', `bearer ${userToken}`)
+                    .send(blogObject)
+                    .expect(401)
+
+                const blogsAtEnd = await helper.blogsInDb()
+
+                expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length)
             })
         })
     })
