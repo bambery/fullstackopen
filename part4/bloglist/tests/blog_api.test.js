@@ -174,6 +174,21 @@ describe('blogs api', () => {
     })
 
     describe('deleting a blog', () => {
+        test('fails if user did not create the Blog', async () => {
+            const user = await User.findOne({ username:helper.TEST_USERNAME1 })
+            let userToken = await helper.logUserIn(user.username, user.id)
+            userToken = userToken.substring(0, userToken.length - 3).concat('aaa')
+
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToDelete = blogsAtStart[0]
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(401)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+        })
+
         test('succeeds with status code 204 if id is valid', async () => {
             const blogsAtStart = await helper.blogsInDb()
             const blogToDelete = blogsAtStart[0]

@@ -40,6 +40,11 @@ const tokenExtractor = (request, response, next) => {
 
     next()
 }
+/*
+const userExtractor = (request, response, next) => {
+    const authorization = request.get('authorization')
+}
+*/
 
 module.exports = {
     requestLogger,

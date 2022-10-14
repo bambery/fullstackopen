@@ -52,6 +52,11 @@ const logUserIn = async (username, userId) => {
         id: userId
     }
 
+    const foo = await api
+        .post('/api/login/')
+
+    console.log(foo)
+
     const token = jwt.sign(
         userForToken,
         process.env.SECRET,
