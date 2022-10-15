@@ -2,9 +2,23 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const app = require('../app')
+const supertest = require('supertest')
 
-const TEST_USERNAME1 = 'testUser1'
-const TEST_USERNAME2 = 'testUser2'
+const api = supertest(app)
+
+const testUsers  = {
+    TEST_USER_1 :{
+        username: 'testUser1',
+        name: 'User 1 of 2',
+        password: 'skret'
+    },
+    TEST_USER_2:{
+        username: 'testUser2',
+        name: 'User 2 of 2',
+        password: 'skret'
+    }
+}
 
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
@@ -16,11 +30,13 @@ const usersInDb = async () => {
     return users.map( u => u.toJSON())
 }
 
-const populateOneUser = async () => {
+const populateOneUser = async (userObj) => {
     await User.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('skret', 10)
-    const user = new User({ username: TEST_USERNAME1, name: 'One Test User',  passwordHash })
+    const testUser = userObj ? userObj : testUsers.TEST_USER_1
+
+    const passwordHash = await bcrypt.hash(testUser.password, 10)
+    const user = new User({ username: testUser.username, name: testUser.name,  passwordHash })
 
     await user.save()
 }
@@ -28,42 +44,27 @@ const populateOneUser = async () => {
 const populateTwoUsers = async () => {
     await User.deleteMany({})
 
-    const twoUsers = [{
-        username: TEST_USERNAME1,
-        name: 'Test User 1 of 2',
-        pass: 'skret'
-    },
-    {
-        username: TEST_USERNAME2,
-        name: 'Test User 2 of 2',
-        pass: 'skret'
-    }]
+    testUserKeys = Object.keys(testUsers)
 
-    for( let user of twoUsers ) {
-        const passwordHash = await bcrypt.hash(user.pass, 10)
+    for( let key of testUserKeys) {
+        const user = testUsers[key]
+        const passwordHash = await bcrypt.hash(user.password, 10)
         const newUser = new User({ username: user.username, name: user.name, passwordHash })
         await newUser.save()
     }
 }
 
-const logUserIn = async (username, userId) => {
+const logUserIn = async (username, password) => {
     const userForToken = {
-        username: username,
-        id: userId
+        username,
+        password
     }
 
-    const foo = await api
+    const response = await api
         .post('/api/login/')
+        .send(userForToken)
 
-    console.log(foo)
-
-    const token = jwt.sign(
-        userForToken,
-        process.env.SECRET,
-        { expiresIn: 60*60 }
-    )
-
-    return token
+    return response.body.token
 }
 
 // this helper method expects you to have already created users. Users will be looped through to create blogs
@@ -267,8 +268,7 @@ const listWithSeveralAuthorsWith2Blogs = [
     },
 ]
 module.exports = {
-    TEST_USERNAME1,
-    TEST_USERNAME2,
+    testUsers,
     blogsInDb,
     usersInDb,
     populateBlogs,
