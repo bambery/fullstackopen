@@ -14,7 +14,7 @@ describe('users api', () => {
 
     describe('creating a new user', () => {
 
-        beforeEach(async () => {
+        beforeAll(async () => {
             await helper.populateOneUser()
         })
 
@@ -43,7 +43,7 @@ describe('users api', () => {
             const usersAtStart = await helper.usersInDb()
 
             const userObject = {
-                username: helper.TEST_USERNAME1,
+                username: helper.testUsers.TEST_USER_1.username,
                 password: 'salainen',
             }
 
@@ -144,12 +144,13 @@ describe('users api', () => {
 
     describe('fetching existing users', () => {
         test('existing User is returned with list of their blog posts', async () => {
-            await User.deleteMany({})
             await Blog.deleteMany({})
             await helper.populateOneUser()
 
-            const user = await User.findOne({ username: helper.TEST_USERNAME1 })
-            const userToken = await helper.logUserIn(user.username, user.id)
+            const testUser = helper.testUsers.TEST_USER_1
+
+            const user = await User.findOne({ username: testUser.username })
+            const userToken = await helper.logUserIn(testUser.username, testUser.password)
             const newBlog = {
                 title: 'new blog 1',
                 author: 'new author 1',
@@ -179,7 +180,7 @@ describe('users api', () => {
                 .expect('Content-Type', /application\/json/)
 
             const response = await api
-                .get(`/api/users/`)
+                .get('/api/users/')
             const userResponse = response.body.find( u => u.id === user.id )
             expect(userResponse.blogs).toHaveLength(2)
             const contents = userResponse.blogs.map( b => b.title )

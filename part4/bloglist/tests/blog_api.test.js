@@ -6,14 +6,13 @@ const User = require('../models/user')
 
 const api = supertest(app)
 
-
 describe('blogs api', () => {
-    beforeAll(async () => {
-        await helper.populateOneUser()
-        await helper.populateBlogs()
-    })
-
     describe('getting existing blogs', () => {
+
+        beforeAll(async () => {
+            await helper.populateOneUser()
+            await helper.populateBlogs()
+        })
 
         test('blogs are returned as json', async () => {
             await api
@@ -33,15 +32,15 @@ describe('blogs api', () => {
     })
 
     describe('creating Blogs', () => {
-        beforeEach(async () => {
+        beforeAll(async () => {
             await helper.populateTwoUsers()
             await helper.populateBlogs()
-
         })
 
         test('a valid blog can be added', async () => {
-            const user = await User.findOne({ username: helper.TEST_USERNAME1 })
-            const userToken = await helper.logUserIn(user.username, user.id)
+            const testUser = helper.testUsers.TEST_USER_1
+
+            const userToken = await helper.logUserIn(testUser.username, testUser.password )
             const newBlog = {
                 title: 'Cryptocurrency-enabled Crime',
                 author: 'David Rosenthal',
@@ -65,9 +64,9 @@ describe('blogs api', () => {
         })
 
         test('a valid blog is associated with the User who created it', async () => {
-
-            const user = await User.findOne({ username: helper.TEST_USERNAME2 })
-            const userToken = await helper.logUserIn(user.username, user.id)
+            const testUser = helper.testUsers.TEST_USER_2
+            const user = await User.findOne({ username: testUser.username })
+            const userToken = await helper.logUserIn(testUser.username, testUser.password)
             const newBlog = {
                 title: 'Abusing HTTP hop-by-hop request headers',
                 author: 'Nathan Davison',
@@ -82,18 +81,18 @@ describe('blogs api', () => {
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
 
-            // note that blogsInDb does not pass through the controller and thus does not populate the User, but it does retain the user's id
             const blogsAtEnd = await helper.blogsInDb()
             const blog = blogsAtEnd.find(blog => blog.title === 'Abusing HTTP hop-by-hop request headers' )
 
-            expect(JSON.stringify(blog.user).replaceAll('\"', '')).toBe(user.id)
+            expect(blog.user.toString()).toBe(user.id)
         })
 
         describe('missing submission properties', () => {
 
             test('blog created without likes is successful and will have zero likes', async () => {
-                const user = await User.findOne({ username: helper.TEST_USERNAME2 })
-                const userToken = await helper.logUserIn(user.username, user.id)
+                const testUser = helper.testUsers.TEST_USER_2
+                const userToken = await helper.logUserIn(testUser.username, testUser.password)
+                const blogsAtStart = await helper.blogsInDb()
                 const blogObject = {
                     title: 'Emanuel Derman\'s Apologia Pro Vita Sua',
                     author: 'Cathy O\'Neil',
@@ -108,14 +107,15 @@ describe('blogs api', () => {
                     .expect('Content-Type', /application\/json/)
 
                 const blogsAtEnd = await helper.blogsInDb()
-                expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length + 1)
+                expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
                 const newBlog = blogsAtEnd.find( b => b.title === 'Emanuel Derman\'s Apologia Pro Vita Sua' )
                 expect(newBlog.likes).toBe(0)
             })
 
             test('blog missing title is not created', async () => {
-                const user = await User.findOne({ username: helper.TEST_USERNAME2 })
-                const userToken = await helper.logUserIn(user.username, user.id)
+                const testUser = helper.testUsers.TEST_USER_2
+                const userToken = await helper.logUserIn(testUser.username, testUser.password)
+                const blogsAtStart = await helper.blogsInDb()
                 const blogObjectNoTitle = {
                     author: 'Ashley Carman and Davey Alba',
                     url: 'https://www.bloomberg.com/news/articles/2022-10-06/podcasts-spur-listeners-to-swamp-health-workers-with-angry-calls',
@@ -128,12 +128,13 @@ describe('blogs api', () => {
                     .expect(400)
 
                 const blogsAtEnd = await helper.blogsInDb()
-                expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length)
+                expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
             })
 
             test('blog missing url is not created', async () => {
-                const user = await User.findOne({ username: helper.TEST_USERNAME2 })
-                const userToken = await helper.logUserIn(user.username, user.id)
+                const testUser = helper.testUsers.TEST_USER_2
+                const userToken = await helper.logUserIn(testUser.username, testUser.password)
+                const blogsAtStart = await helper.blogsInDb()
                 const blogObjectNoUrl = {
                     title: 'Health-Care Workers Are Swamped Again, This Time With Angry Calls From Podcast Listeners',
                     author: 'Ashley Carman and Davey Alba',
@@ -146,18 +147,17 @@ describe('blogs api', () => {
                     .expect(400)
 
                 const blogsAtEnd = await helper.blogsInDb()
-                expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length)
+                expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
             })
 
-            test('creation fails if user is not authenticated', async ()=> {
-                const user = await User.findOne({ username:helper.TEST_USERNAME1 })
-                let userToken = await helper.logUserIn(user.username, user.id)
+            test('creation fails if user is not authenticated', async () => {
+                const testUser = helper.testUsers.TEST_USER_1
+                let userToken = await helper.logUserIn(testUser.username, testUser.password)
                 userToken = userToken.substring(0, userToken.length - 3).concat('aaa')
-
+                const blogsAtStart = await helper.blogsInDb()
                 const blogObject = {
                     title: 'this user has an incorrect token',
                     url: 'https://www.dne.com',
-                    userId: user.id
                 }
 
                 await api
@@ -168,17 +168,43 @@ describe('blogs api', () => {
 
                 const blogsAtEnd = await helper.blogsInDb()
 
-                expect(blogsAtEnd).toHaveLength(helper.listWithManyBlogs.length)
+                expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
             })
         })
     })
 
     describe('deleting a blog', () => {
-        test('succeeds with status code 204 if id is valid', async () => {
+        beforeEach(async () => {
+            await helper.populateTwoUsers()
+            await helper.populateBlogs()
+        })
+
+        test('fails if user did not create the Blog', async () => {
+            const testUser = helper.testUsers.TEST_USER_1
+            let userToken = await helper.logUserIn(testUser.username, testUser.password)
+            userToken = userToken.substring(0, userToken.length - 3).concat('aaa')
+
             const blogsAtStart = await helper.blogsInDb()
             const blogToDelete = blogsAtStart[0]
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', `bearer ${userToken}`)
+                .expect(401)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+        })
+
+        test('succeeds if deleted by the User who created it', async () => {
+
+            const testUser = helper.testUsers.TEST_USER_1
+            let userToken = await helper.logUserIn(testUser.username, testUser.password)
+
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToDelete = blogsAtStart[0]
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', `bearer ${userToken}`)
                 .expect(204)
 
             const blogsAtEnd = await helper.blogsInDb()
