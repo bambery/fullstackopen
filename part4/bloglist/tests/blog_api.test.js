@@ -38,9 +38,9 @@ describe('blogs api', () => {
         })
 
         test('a valid blog can be added', async () => {
-            testUser = helper.testUsers.TEST_USER_1
+            const testUser = helper.testUsers.TEST_USER_1
 
-            const userToken = await helper.logUserIn(username = testUser.username, password = testUser.password )
+            const userToken = await helper.logUserIn(testUser.username, testUser.password )
             const newBlog = {
                 title: 'Cryptocurrency-enabled Crime',
                 author: 'David Rosenthal',
@@ -65,7 +65,7 @@ describe('blogs api', () => {
 
         test('a valid blog is associated with the User who created it', async () => {
             const testUser = helper.testUsers.TEST_USER_2
-            const user = await User.findOne({ username: testUser.username})
+            const user = await User.findOne({ username: testUser.username })
             const userToken = await helper.logUserIn(testUser.username, testUser.password)
             const newBlog = {
                 title: 'Abusing HTTP hop-by-hop request headers',
@@ -150,7 +150,7 @@ describe('blogs api', () => {
                 expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
             })
 
-            test('creation fails if user is not authenticated', async ()=> {
+            test('creation fails if user is not authenticated', async () => {
                 const testUser = helper.testUsers.TEST_USER_1
                 let userToken = await helper.logUserIn(testUser.username, testUser.password)
                 userToken = userToken.substring(0, userToken.length - 3).concat('aaa')

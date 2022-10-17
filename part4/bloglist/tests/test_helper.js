@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const app = require('../app')
@@ -44,7 +43,7 @@ const populateOneUser = async (userObj) => {
 const populateTwoUsers = async () => {
     await User.deleteMany({})
 
-    testUserKeys = Object.keys(testUsers)
+    const testUserKeys = Object.keys(testUsers)
 
     for( let key of testUserKeys) {
         const user = testUsers[key]

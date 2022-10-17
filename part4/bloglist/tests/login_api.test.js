@@ -2,14 +2,13 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
-const User = require('../models/user')
 
 const api = supertest(app)
 
 test('existing user logs in and gets token', async () => {
     await helper.populateOneUser()
 
-    const testUser = {...helper.testUsers.TEST_USER_1}
+    const testUser = { ...helper.testUsers.TEST_USER_1 }
 
     const response = await api
         .post('/api/login')
@@ -22,7 +21,7 @@ test('existing user logs in and gets token', async () => {
 test('user with incorrect password is not logged in', async () => {
     await helper.populateOneUser()
 
-    const testUser = {...helper.testUsers.TEST_USER_1}
+    const testUser = { ...helper.testUsers.TEST_USER_1 }
     testUser.password = 'incorrect'
 
     const response = await api
