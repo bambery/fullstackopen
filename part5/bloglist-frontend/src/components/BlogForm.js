@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const BlogForm = (props) => {
     const { addBlog } = props
@@ -60,8 +60,8 @@ const BlogForm = (props) => {
                     url:
                     <input
                         type="text"
-                        onChange={handleBlogUrlChange} 
-                        value={blogUrl} 
+                        onChange={handleBlogUrlChange}
+                        value={blogUrl}
                     />
                 </label>
             </div>
