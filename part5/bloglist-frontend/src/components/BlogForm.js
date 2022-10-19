@@ -39,21 +39,29 @@ const BlogForm = (props) => {
                 <label>
                     title:
                     <input
-                        onChange={handleTitleChange} value={title}
+                        type="text"
+                        onChange={handleTitleChange}
+                        value={title}
                     />
                 </label>
             </div>
             <div>
                 <label>
                     author:
-                    <input onChange={handleAuthorChange} value={author}
+                    <input
+                        type="text"
+                        onChange={handleAuthorChange}
+                        value={author}
                     />
                 </label>
             </div>
             <div>
                 <label>
                     url:
-                    <input onChange={handleBlogUrlChange} value={blogUrl}
+                    <input
+                        type="text"
+                        onChange={handleBlogUrlChange} 
+                        value={blogUrl} 
                     />
                 </label>
             </div>

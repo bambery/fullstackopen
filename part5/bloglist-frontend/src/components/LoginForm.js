@@ -23,7 +23,6 @@ const LoginForm = (props) => {
                 <input
                     type="text"
                     value={ username }
-                    name = "username"
                     onChange={({ target }) => setUsername(target.value)}
                 />
             </div>
@@ -32,7 +31,6 @@ const LoginForm = (props) => {
                 <input
                     type="password"
                     value={ password }
-                    name = "password"
                     onChange={({ target }) => setPassword(target.value)}
                 />
             </div>
