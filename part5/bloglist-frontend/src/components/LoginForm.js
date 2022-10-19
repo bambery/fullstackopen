@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const LoginForm = (props) => {
     const { user, handleLogin, handleLogout } = props
@@ -17,7 +17,6 @@ const LoginForm = (props) => {
 
     const loginForm = () => (
         <form onSubmit={ handleLoginSubmit }>
-            <h2>log in to application</h2>
             <div>
                 username
                 <input
