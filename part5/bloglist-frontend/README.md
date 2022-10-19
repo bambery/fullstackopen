@@ -4,3 +4,6 @@ This repo is for the [exercises 5.1 - 5.4 of Part 5a](https://fullstackopen.com/
 
 # 5.1
 clone base repo and implement functionality to log a user in.
+
+# 5.2
+Frontend should remember logged in users and allow them to log out.
