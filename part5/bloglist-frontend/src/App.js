@@ -3,6 +3,8 @@ import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Toggleable from './components/Toggleable'
+
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -10,6 +12,7 @@ const App = () => {
     const [blogs, setBlogs] = useState([])
     const [user, setUser]= useState(null)
     const [notification, setNotification] = useState(null)
+    const [newBlogVisible, setNewBlogVisible] = useState(false)
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -64,6 +67,7 @@ const App = () => {
             .then( returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
                 setNotification({'message': `${returnedBlog.title} by ${returnedBlog.author} added`, 'type':'alert'})
+                toggleNewBlogVisibility()
                 setTimeout(() => {
                     setNotification(null)
                 }, 5000)
@@ -82,7 +86,6 @@ const App = () => {
 
     const blogList = () => (
         <div>
-            <BlogForm addBlog={addBlog} />
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
             )}
@@ -98,11 +101,18 @@ const App = () => {
         </div>
     )
 
+    const toggleNewBlogVisibility = () => {
+        setNewBlogVisible(!newBlogVisible)
+    }
+
     return (
         <div>
             { pageHeader() }
             <Notification notification={notification} />
             <LoginForm user={user} handleLogin={handleLogin} handleLogout={handleLogout} />
+            <Toggleable buttonLabel="new blog" visibleState={newBlogVisible} toggle={toggleNewBlogVisibility}>
+                <BlogForm addBlog={addBlog} />
+            </Toggleable>
             { user && blogList() }
         </div>
     )
