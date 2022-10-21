@@ -67,7 +67,6 @@ const App = () => {
             .then( returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
                 setNotification({'message': `${returnedBlog.title} by ${returnedBlog.author} added`, 'type':'alert'})
-                toggleNewBlogVisibility()
                 setTimeout(() => {
                     setNotification(null)
                 }, 5000)
@@ -82,12 +81,13 @@ const App = () => {
                     handleLogout()
                 }
             })
+        toggleNewBlogVisibility()
     }
 
     const blogList = () => (
         <div>
             {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog}/>
             )}
         </div>
     )
