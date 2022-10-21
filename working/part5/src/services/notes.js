@@ -17,8 +17,13 @@ const create = async newObject => {
         headers: { Authorization: token },
     }
 
-    const response = await axios.post(baseUrl, newObject, object)
-    return response.data
+    try {
+        const response = await axios.post(baseUrl, newObject, config)
+        return response.data
+    } catch (err) {
+        // I need a middleware in my FE to pass along error messages?
+        return Promise.reject(err)
+    }
 }
 
 const update = (id, newObject) => {
