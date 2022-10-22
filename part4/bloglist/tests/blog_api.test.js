@@ -216,17 +216,19 @@ describe('blogs api', () => {
         test('to change the like count', async () => {
             const blogsAtStart = await helper.blogsInDb()
             const blogToUpdate = blogsAtStart[0]
-            const blogObjectUpdateLikes = {
-                likes: blogToUpdate.likes + 1,
+            console.log(`has ${blogToUpdate.likes} likes`)
+            const blogObject = {
+                ...blogToUpdate, likes: blogToUpdate.likes + 1,
             }
 
             await api
                 .put(`/api/blogs/${blogToUpdate.id}`)
-                .send(blogObjectUpdateLikes)
+                .send(blogObject)
                 .expect(200)
 
             const blogsAtEnd = await helper.blogsInDb()
             const updatedBlog = blogsAtEnd.find( blog => blog.id === blogToUpdate.id)
+            console.log(`updated blog has ${updatedBlog.likes} likes`)
             expect(updatedBlog.likes).toBe(blogToUpdate.likes + 1)
         })
     })
