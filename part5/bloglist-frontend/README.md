@@ -28,7 +28,10 @@ Implement show/hide functionality for the new blogs form. Form is hidden by defa
 Separate form for creating a new blog into a separate component (already done, likely in 5.3).
 
 ## 5.7
-Show/hide blog details with a button
+Show/hide blog details with a button.
 
 ## 5.8
 Implement "like" button functionality for each post, so that a logged in user may "like" a blog and thereby increase its "like count". This part took extra work since I needed to reimplement the PUT on the backend to be more RESTful. Made a workitem for myself to suggest some minor changes to the earlier chapters to clarify implementing update actions in the API.
+
+## 5.9
+Display Blog posts by number of likes.
