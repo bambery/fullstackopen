@@ -30,8 +30,6 @@ const update = async (updatedBlog) => {
     }
 
     const response = await axios.put(`${baseUrl}/${updatedBlog.id}`, updatedBlog, config)
-//    console.log(`### inside blog service ${JSON.stringify(response)} ##`)
-    console.log(JSON.stringify(response))
     return response.data
 }
 
