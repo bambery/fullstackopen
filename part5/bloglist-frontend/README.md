@@ -35,3 +35,6 @@ Implement "like" button functionality for each post, so that a logged in user ma
 
 ## 5.9
 Display Blog posts by number of likes.
+
+## 5.10
+Allow users to delete the Blog posts they have created.

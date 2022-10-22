@@ -113,12 +113,48 @@ const App = () => {
             })
     }
 
+    const displayDelete = (blog) => {
+        return user.id === blog.user.id ? true : false
+    }
+
+    const deleteBlog = (blog) => {
+        blogService
+            .destroy(blog.id)
+            .then(() => {
+                setBlogs(blogs.filter(b => b.id !== blog.id))
+                setNotification({'message': `Blog post titled '${blog.title}' has been deleted.`, 'type': 'alert'})
+
+            })
+            .catch(error => {
+                if (error.response.data.error.includes('token expired')) {
+                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
+
+                    logUserOut()
+                } else {
+                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
+                }
+            })
+    }
+
+
     const blogList = () => (
         <div>
             { blogs
                 .sort((a, b) => { return a.likes > b.likes ? -1 : 1 })
                 .map(blog =>
-                    <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+                    <Blog
+                        key={blog.id}
+                        blog={blog}
+                        updateBlog={updateBlog}
+                        displayDelete={displayDelete(blog)}
+                        deleteBlog={deleteBlog}
+                    />
             )}
         </div>
     )

@@ -22,3 +22,10 @@
     border-width: 1px;
     margin-bottom: 5px;
 }
+
+.delete-btn {
+    background: #0078D4;
+    border-radius: 5px;
+    padding:.25em .5em;
+    text-align: center;
+}
