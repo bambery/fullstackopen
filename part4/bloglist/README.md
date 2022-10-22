@@ -1,12 +1,12 @@
 # Part 4d exercises
-https://fullstackopen.com/en/part4/token_authentication#exercises-4-15-4-23
 
-## 4.18 & 4.19
+[These are the solutions for Part exercises 4.15-4.23.](https://fullstackopen.com/en/part4/token_authentication#exercises-4-15-4-23)
 
-### 4.18
+
+## 4.18
 Implement token-based authentication according to part 4 chapter [Token authentication](https://fullstackopen.com/en/part4/token_authentication).
 
-### 4.19
+## 4.19
 Modify adding new blogs so that it is only possible if a valid token is sent with the HTTP POST request. The user identified by the token is designated as the creator of the blog.
 
 ### 4.18 & 4.19 notes
@@ -29,3 +29,7 @@ Fix tests (I fixed tests during each exercise, so nothing to do here)
 
 ### 4.20 - 4.23
 Refactored tests a little, otherwise no issues.
+
+## 5.8
+[Part 5b exercises: 5.5-5.10](https://fullstackopen.com/en/part5/props_children_and_proptypes#exercises-5-5-5-10)
+The backend needed to be updated again for part 5. I got to discover that I had misunderstood some unclear sections of the lesson, where the "put" action is not actually a true put and isn't enforced and so acts as a patch. I took it down in my notes to submit corrections for to clarify the lesson intention. Fixed the backend to be more RESTful. Glad, in retrospect, that I am not submitting the exercises as I go and I had an opportunity to discover my misunderstanding.

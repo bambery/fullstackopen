@@ -44,7 +44,9 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
+    // the following line ensures that if there is not a valid token, an error will be thrown when attempting to reach routes that consume this middleware.
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    // token is valid, but does not contain a user's id
     if (!decodedToken.id) {
         return response.status(401).json({ error: 'token missing or invalid' })
     }

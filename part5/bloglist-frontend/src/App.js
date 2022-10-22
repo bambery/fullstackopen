@@ -29,6 +29,13 @@ const App = () => {
         }
     }, [])
 
+    const displayNotification = ( options ) => {
+            setNotification(options)
+            setTimeout(() => {
+                setNotification(null)
+            }, 5000)
+    }
+
     const handleLogin = async (loginInfo) => {
         try {
             const user = await loginService.login(loginInfo)
@@ -39,29 +46,24 @@ const App = () => {
 
             blogService.setToken(user.token)
             setUser(user)
-            setNotification({'message': `${user.username} logged in!`, 'type': 'alert'})
-            setTimeout(() => {
-                setNotification(null)
-            }, 5000)
+            displayNotification({'message': `${user.username} logged in!`, 'type': 'alert'})
         } catch (exception) {
-            setNotification({'message': 'Username or password is incorrect', 'type': 'error'})
-            setTimeout(() => {
-                setNotification(null)
-            }, 5000)
+            displayNotification({'message': 'Username or password is incorrect', 'type': 'error'})
         }
     }
 
     const handleLogout = () => {
+        displayNotification({'message': `${user.username} logged out!`, 'type': 'alert'})
+        logUserOut()
+    }
+
+    const logUserOut = () => {
         window.localStorage.removeItem('loggedBlogappUser')
         blogService.unsetToken()
-        setNotification({'message': `${user.username} logged out!`, 'type': 'alert'})
-        setTimeout(() => {
-            setNotification(null)
-        }, 5000)
         setUser(null)
     }
 
-    const addBlog = (blogObject) => {
+    const addBlog = blogObject => {
         blogService
             .create(blogObject)
             .then( returnedBlog => {
@@ -72,22 +74,49 @@ const App = () => {
                 }, 5000)
             })
             .catch(error => {
-                console.log(error.response.data.error)
-                setNotification({'message': `${error.response.data.error}`, 'type':'error'})
-                setTimeout(() => {
-                    setNotification(null)
-                }, 5000)
                 if (error.response.data.error.includes('token expired')) {
-                    handleLogout()
+                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
+                    logUserOut()
+                } else {
+                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
                 }
             })
         toggleNewBlogVisibility()
     }
 
+    const updateBlog = (blog) => {
+        blogService
+            .update(blog)
+            .then(returnedBlog => {
+                setBlogs(blogs.map(b => b.id !== blog.id ? b : returnedBlog))
+            })
+            .catch(error => {
+                if (error.response.data.error.includes('token expired')) {
+                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
+
+                    logUserOut()
+                } else {
+                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setTimeout(() => {
+                        setNotification(null)
+                    }, 5000)
+                }
+            })
+    }
+
     const blogList = () => (
         <div>
             {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog}/>
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
             )}
         </div>
     )

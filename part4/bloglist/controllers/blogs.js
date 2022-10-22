@@ -22,7 +22,9 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     })
 
     const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
+    await savedBlog.populate('user', { username: 1, name: 1 })
+
+    user.blogs = user.blogs.concat(savedBlog.id)
     await user.save()
 
     response.status(201).json(savedBlog)
@@ -39,20 +41,19 @@ blogsRouter.delete('/:id/', middleware.userExtractor, async (request, response) 
     }
 })
 
-blogsRouter.put('/:id/', async (request, response) => {
-    const body = request.body
+blogsRouter.put('/:id/', (request, response) => {
+    const blog = request.body
+    // need to remove the mongoose populated user object and replace with plain user id of original blog creator
+    blog.user = request.body.user.id
 
-    const blog = {
-        likes: body.likes
-    }
-
-    await Blog.findByIdAndUpdate(request.params.id, blog, {
+    Blog.findByIdAndUpdate(request.params.id, blog, {
         new: true,
         runValidators: true,
         context: 'query'
     })
+        .populate('user', { username: 1, name: 1 })
         .then(updatedNote => {
-            response.json(updatedNote)
+            return response.json(updatedNote)
         })
 })
 
