@@ -33,3 +33,6 @@ Refactored tests a little, otherwise no issues.
 ## 5.8
 [Part 5b exercises: 5.5-5.10](https://fullstackopen.com/en/part5/props_children_and_proptypes#exercises-5-5-5-10)
 The backend needed to be updated again for part 5. I got to discover that I had misunderstood some unclear sections of the lesson, where the "put" action is not actually a true put and isn't enforced and so acts as a patch. I took it down in my notes to submit corrections for to clarify the lesson intention. Fixed the backend to be more RESTful. Glad, in retrospect, that I am not submitting the exercises as I go and I had an opportunity to discover my misunderstanding.
+
+# 5.10
+Added user.id to response when logging a user in.
