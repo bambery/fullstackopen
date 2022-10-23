@@ -64,14 +64,14 @@ const App = () => {
 
         noteService
             .update(id, changedNote)
-            .then( returnedNote =>{
+            .then( returnedNote => {
                 setNotes(notes.map(n => n.id !== id ? n : returnedNote))
             })
-            .catch(error => {
+            .catch( () => {
                 setErrorMessage(
                     `Note '${note.content}' was already removed from the server`
                 )
-                setTimeout(() =>{
+                setTimeout(() => {
                     setErrorMessage(null)
                 }, 5000)
                 setNotes(notes.filter(n => n.id !== id))
@@ -139,7 +139,7 @@ const App = () => {
                     <Note
                         key={note.id}
                         note={note}
-                        toggleImportance={()=> toggleImportanceOf(note.id)}
+                        toggleImportance={ () => toggleImportanceOf(note.id) }
                     />
                 )}
             </ul>
