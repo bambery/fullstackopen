@@ -12,7 +12,7 @@ const Blog = ({ blog, updateBlog, displayDelete, deleteBlog }) => {
         setVisible(!visible)
     }
     const incrementLikes = () => {
-        const blogObject = {...blog, likes: blog.likes + 1}
+        const blogObject = { ...blog, likes: blog.likes + 1 }
         updateBlog(blogObject)
     }
 

@@ -30,10 +30,10 @@ const App = () => {
     }, [])
 
     const displayNotification = ( options ) => {
-            setNotification(options)
-            setTimeout(() => {
-                setNotification(null)
-            }, 5000)
+        setNotification(options)
+        setTimeout(() => {
+            setNotification(null)
+        }, 5000)
     }
 
     const handleLogin = async (loginInfo) => {
@@ -46,14 +46,14 @@ const App = () => {
 
             blogService.setToken(user.token)
             setUser(user)
-            displayNotification({'message': `${user.username} logged in!`, 'type': 'alert'})
+            displayNotification({ 'message': `${user.username} logged in!`, 'type': 'alert' })
         } catch (exception) {
-            displayNotification({'message': 'Username or password is incorrect', 'type': 'error'})
+            displayNotification({ 'message': 'Username or password is incorrect', 'type': 'error' })
         }
     }
 
     const handleLogout = () => {
-        displayNotification({'message': `${user.username} logged out!`, 'type': 'alert'})
+        displayNotification({ 'message': `${user.username} logged out!`, 'type': 'alert' })
         logUserOut()
     }
 
@@ -68,20 +68,20 @@ const App = () => {
             .create(blogObject)
             .then( returnedBlog => {
                 setBlogs(blogs.concat(returnedBlog))
-                setNotification({'message': `${returnedBlog.title} by ${returnedBlog.author} added`, 'type':'alert'})
+                setNotification({ 'message': `${returnedBlog.title} by ${returnedBlog.author} added`, 'type':'alert' })
                 setTimeout(() => {
                     setNotification(null)
                 }, 5000)
             })
             .catch(error => {
                 if (error.response.data.error.includes('token expired')) {
-                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setNotification({ 'message': `${error.response.data.error}`, 'type':'error' })
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
                     logUserOut()
                 } else {
-                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setNotification({ 'message': `${error.response.data.error}`, 'type':'error' })
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
@@ -98,14 +98,14 @@ const App = () => {
             })
             .catch(error => {
                 if (error.response.data.error.includes('token expired')) {
-                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setNotification({ 'message': `${error.response.data.error}`, 'type':'error' })
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
 
                     logUserOut()
                 } else {
-                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setNotification({ 'message': `${error.response.data.error}`, 'type':'error' })
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
@@ -122,19 +122,19 @@ const App = () => {
             .destroy(blog.id)
             .then(() => {
                 setBlogs(blogs.filter(b => b.id !== blog.id))
-                setNotification({'message': `Blog post titled '${blog.title}' has been deleted.`, 'type': 'alert'})
+                setNotification({ 'message': `Blog post titled '${blog.title}' has been deleted.`, 'type': 'alert' })
 
             })
             .catch(error => {
                 if (error.response.data.error.includes('token expired')) {
-                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setNotification({ 'message': `${error.response.data.error}`, 'type':'error' })
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
 
                     logUserOut()
                 } else {
-                    setNotification({'message': `${error.response.data.error}`, 'type':'error'})
+                    setNotification({ 'message': `${error.response.data.error}`, 'type':'error' })
                     setTimeout(() => {
                         setNotification(null)
                     }, 5000)
@@ -155,7 +155,8 @@ const App = () => {
                         displayDelete={displayDelete(blog)}
                         deleteBlog={deleteBlog}
                     />
-            )}
+                )
+            }
         </div>
     )
 

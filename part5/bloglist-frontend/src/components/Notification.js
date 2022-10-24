@@ -8,7 +8,7 @@ const Notification = ({ notification }) => {
     const { message, type } = notification
 
     return(
-        <div className={[type, 'notification'].join(" ")}>
+        <div className={[type, 'notification'].join(' ')}>
             {message}
         </div>
     )
