@@ -12,8 +12,8 @@ const unsetToken = () => {
 }
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+    const request = axios.get(baseUrl)
+    return request.then(response => response.data)
 }
 
 const create = async (newBlog) => {
@@ -41,4 +41,5 @@ const destroy = async (blogIdToDelete) => {
     return response.data
 
 }
+
 export default { getAll, setToken, unsetToken, create, update, destroy }
