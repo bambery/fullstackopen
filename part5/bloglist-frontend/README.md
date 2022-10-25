@@ -38,3 +38,9 @@ Display Blog posts by number of likes.
 
 ## 5.10
 Allow users to delete the Blog posts they have created.
+
+## 5.11
+Define PropTypes for one component in application (I did several)
+
+## 5.12
+Add ESlint to the project and correct errors.
