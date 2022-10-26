@@ -44,3 +44,9 @@ Define PropTypes for one component in application (I did several)
 
 ## 5.12
 Add ESlint to the project and correct errors.
+
+# Part 5c: front end testing
+[Part c exercises: 5.13-5.16](https://fullstackopen.com/en/part5/testing_react_apps#exercises-5-13-5-16)
+
+## 5.13
+add test to check that Blogs are by default displayed with title and author displayed, and the other content hidden.
