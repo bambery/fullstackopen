@@ -48,4 +48,15 @@ describe('Blog component', () => {
         expect(hiddenLikes).toBeVisible()
         expect(hiddenUrl).toBeVisible()
     })
+
+    test('clicking like button twice calls incrementLikes handler twice', async () => {
+
+        const user = userEvent.setup()
+        const likeButton = screen.getByText('like')
+
+        await user.click(likeButton)
+        await user.click(likeButton)
+
+        expect(mockHandler).toHaveBeenCalledTimes(2)
+    })
 })

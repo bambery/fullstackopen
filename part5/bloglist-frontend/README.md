@@ -53,3 +53,6 @@ add test to check that Blogs are by default displayed with title and author disp
 
 ## 5.14
 Make a test which checks that the blog's url and number of likes are shown when the button controlling the shown details has been clicked.
+
+## 5.15
+Make a test which ensures that if the like button is clicked twice, the event handler the component received as props is called twice.
