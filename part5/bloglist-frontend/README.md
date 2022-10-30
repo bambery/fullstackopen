@@ -50,3 +50,6 @@ Add ESlint to the project and correct errors.
 
 ## 5.13
 add test to check that Blogs are by default displayed with title and author displayed, and the other content hidden.
+
+## 5.14
+Make a test which checks that the blog's url and number of likes are shown when the button controlling the shown details has been clicked.
