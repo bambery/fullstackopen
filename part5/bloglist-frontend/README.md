@@ -56,3 +56,8 @@ Make a test which checks that the blog's url and number of likes are shown when 
 
 ## 5.15
 Make a test which ensures that if the like button is clicked twice, the event handler the component received as props is called twice.
+
+## 5.16
+Make a test for the new blog form. The test should check, that the form calls the event handler it received as props with the right details when a new blog is created.
+** This test alone takes over 300s to run, due to using userEvent to fill in 3 fields with `userEvent.type()` and clicking one button to submit the form. userEvent.type() is a well known problem maker: https://github.com/testing-library/user-event/discussions/977?sort=top
+There is apparently no way/interest to improve the incredible amount of time it takes to run tests, which seems to make this library completely useless. It took an incredible amount of time to try and debug minor issues with this test since it took FIVE MINUTES each run of the test, even failing runs. Unmanageable.
