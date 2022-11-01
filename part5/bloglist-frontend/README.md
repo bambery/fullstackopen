@@ -1,6 +1,6 @@
 # Part 5a: Login in frontend
 
-This repo is for the [exercises 5.1 - 5.4 of Part 5a](https://fullstackopen.com/en/part5/login_in_frontend#exercises-5-1-5-4) of [Full Stack Open's React tutorial](https://fullstackopen.com). The base repository for this section was cloned from https://github.com/fullstack-hy2020/bloglist-frontend.
+Completed [exercises 5.1 - 5.4 of Part 5a](https://fullstackopen.com/en/part5/login_in_frontend#exercises-5-1-5-4) of [Full Stack Open's React tutorial](https://fullstackopen.com). The base repository for this section was cloned from https://github.com/fullstack-hy2020/bloglist-frontend.
 
 ## 5.1
 clone base repo and implement functionality to log a user in.
@@ -61,3 +61,8 @@ Make a test which ensures that if the like button is clicked twice, the event ha
 Make a test for the new blog form. The test should check, that the form calls the event handler it received as props with the right details when a new blog is created.
 ** This test alone takes over 300s to run, due to using userEvent to fill in 3 fields with `userEvent.type()` and clicking one button to submit the form. userEvent.type() is a well known problem maker: https://github.com/testing-library/user-event/discussions/977?sort=top
 There is apparently no way/interest to improve the incredible amount of time it takes to run tests, which seems to make this library completely useless. It took an incredible amount of time to try and debug minor issues with this test since it took FIVE MINUTES each run of the test, even failing runs. Unmanageable.
+
+# Part 5d: End to end testing
+
+## 5.17
+Install cypress, add a /testing endpoint for the backend, and add a test for checking the login form appears for logged out users.
