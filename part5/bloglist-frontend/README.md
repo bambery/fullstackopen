@@ -66,3 +66,6 @@ There is apparently no way/interest to improve the incredible amount of time it 
 
 ## 5.17
 Install cypress, add a /testing endpoint for the backend, and add a test for checking the login form appears for logged out users.
+
+## 5.18
+Add tests for successful and insuccessful logins.
