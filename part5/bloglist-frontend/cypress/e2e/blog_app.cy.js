@@ -39,15 +39,31 @@ describe('Blog app', function() {
     describe('when logged in', function() {
         beforeEach(function() {
             cy.login({ username: 'testUser', password: 'salainen' })
+            cy.newBlog({ title: 'Already exists', author: 'An Existing Author', url: 'http://old.com' })
         })
 
-        it.only('A new blog can be created', function() {
+        it('A new blog can be created', function() {
             cy.contains('button', 'new blog').click()
             cy.contains('label', 'title:').find('input').type('a brand new blog')
             cy.contains('label', 'author:').find('input').type('a test author')
             cy.contains('label', 'url:').find('input').type('http://test.com')
             cy.contains('button', 'create').click()
             cy.get('.blog-list').should('include.text', 'a brand new blog').find('div', '.blog-item')
+        })
+
+        it.only('lets a user like a blog', function() {
+            cy.contains('Already exists').contains('show').click()
+            cy.get('[data-cy="blog-likes"]').then(($div) => {
+                const regex = /likes:\s(\d)\slike/
+                const likes = parseInt($div.text().match(regex)[1])
+                cy.get('[data-cy="blog-like-btn"]')
+                  .click()
+                  .then(() => {
+                      cy.get('[data-cy="blog-likes"]').should(($foo) => {
+                          expect(parseInt($foo.text().match(regex)[1])).to.eq(likes + 1)
+                      })
+                  })
+            })
         })
     })
 })

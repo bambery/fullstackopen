@@ -72,3 +72,6 @@ Add tests for successful and insuccessful logins.
 
 ## 5.19
 Add test for logged in user creating a new Blog.
+
+## 5.20
+Add test for user to like an existing Blog.
