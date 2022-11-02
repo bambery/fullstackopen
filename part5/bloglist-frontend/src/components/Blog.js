@@ -26,11 +26,11 @@ const Blog = ({ blog, updateBlog, displayDelete, deleteBlog }) => {
         <div className="blog-item">
             {blog.title} {blog.author} <button onClick={toggleDetails}>{visible ? 'hide' : 'show'}</button>
             <div style={hideDetails}>
-                <div>{blog.url}</div>
-                <div>likes: {blog.likes} <button onClick={incrementLikes}>like</button></div>
-                <div>{blog.user.name}</div>
+                <div data-cy="blog-url">{blog.url}</div>
+                <div data-cy="blog-likes">likes: {blog.likes} <button data-cy="blog-like-btn" onClick={incrementLikes}>like</button></div>
+                <div data-cy="blog-created-user">{blog.user.name}</div>
                 <div style={hideDelete}>
-                    <button onClick={handleDeleteBlog} className='delete-btn'>remove</button>
+                    <button data-cy="delete-btn" onClick={handleDeleteBlog} className='delete-btn'>remove</button>
                 </div>
             </div>
         </div>
