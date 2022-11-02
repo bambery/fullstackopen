@@ -35,4 +35,19 @@ describe('Blog app', function() {
             cy.contains('Username or password is incorrect').should('have.class', 'error').should('have.css', 'color', 'rgb(255, 0, 0)')
         })
     })
+
+    describe('when logged in', function() {
+        beforeEach(function() {
+            cy.login({ username: 'testUser', password: 'salainen' })
+        })
+
+        it.only('A new blog can be created', function() {
+            cy.contains('button', 'new blog').click()
+            cy.contains('label', 'title:').find('input').type('a brand new blog')
+            cy.contains('label', 'author:').find('input').type('a test author')
+            cy.contains('label', 'url:').find('input').type('http://test.com')
+            cy.contains('button', 'create').click()
+            cy.get('.blog-list').should('include.text', 'a brand new blog').find('div', '.blog-item')
+        })
+    })
 })
