@@ -144,7 +144,7 @@ const App = () => {
 
 
     const blogList = () => (
-        <div>
+        <div className="blog-list">
             { blogs
                 .sort((a, b) => { return a.likes > b.likes ? -1 : 1 })
                 .map(blog =>

@@ -69,3 +69,6 @@ Install cypress, add a /testing endpoint for the backend, and add a test for che
 
 ## 5.18
 Add tests for successful and insuccessful logins.
+
+## 5.19
+Add test for logged in user creating a new Blog.
