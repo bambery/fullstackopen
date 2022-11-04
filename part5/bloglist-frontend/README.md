@@ -75,3 +75,6 @@ Add test for logged in user creating a new Blog.
 
 ## 5.20
 Add test for user to like an existing Blog.
+
+## 5.21
+Add test that a user who created a Blog post can also delete it. Test that a user who did not create the blog post cannot delete it.

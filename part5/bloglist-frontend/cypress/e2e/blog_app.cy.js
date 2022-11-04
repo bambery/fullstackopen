@@ -51,7 +51,7 @@ describe('Blog app', function() {
             cy.get('.blog-list').should('include.text', 'a brand new blog').find('div', '.blog-item')
         })
 
-        it.only('lets a user like a blog', function() {
+        it('lets a user like a blog', function() {
             cy.contains('Already exists').contains('show').click()
             cy.get('[data-cy="blog-likes"]').then(($div) => {
                 const regex = /likes:\s(\d)\slike/
@@ -64,6 +64,35 @@ describe('Blog app', function() {
                       })
                   })
             })
+        })
+
+        it('lets the user who created a blog delete it', function() {
+            cy.contains('Already exists').then(($div) => {
+                cy.wrap($div).contains('button', 'show').click()
+                cy.wrap($div).contains('button', 'remove').click()
+                cy.get('.notification').should('have.text','Blog post titled \'Already exists\' has been deleted.')
+            })
+        })
+
+        it.only('does not allow a user to delete a blog post they did not create', function() {
+            cy.contains('button', 'logout').click()
+
+            const user = {
+                username: 'cantDelete',
+                name: 'Can\'t Delete',
+                password: 'salainen'
+            }
+            cy.request('POST', 'http://localhost:3003/api/users', user)
+            cy.visit('http://localhost:3000')
+
+            cy.get('[data-cy="login-username"]').type('cantDelete')
+            cy.get('[data-cy="login-password"]').type('salainen')
+            cy.contains('button', 'login').click()
+
+            cy.contains('Already exists')
+              .contains('button', 'show')
+              .click()
+              .should('not.contain', 'remove')
         })
     })
 })
