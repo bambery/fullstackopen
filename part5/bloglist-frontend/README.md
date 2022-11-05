@@ -78,3 +78,6 @@ Add test for user to like an existing Blog.
 
 ## 5.21
 Add test that a user who created a Blog post can also delete it. Test that a user who did not create the blog post cannot delete it.
+
+## 5.22
+Add test that posts are displayed in descending order of number of likes. Useful link: https://docs.cypress.io/api/commands/intercept#Waiting-on-a-request
