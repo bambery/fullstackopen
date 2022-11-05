@@ -44,8 +44,8 @@ describe('Blog app', function() {
 
         it('A new blog can be created', function() {
             cy.contains('button', 'new blog').click()
-            cy.contains('label', 'title:').find('input').type('a brand new blog')
-            cy.contains('label', 'author:').find('input').type('a test author')
+            cy.contains('label', 'title:').find('input').type('A brand new blog')
+            cy.contains('label', 'author:').find('input').type('A test author')
             cy.contains('label', 'url:').find('input').type('http://test.com')
             cy.contains('button', 'create').click()
             cy.get('.blog-list').should('include.text', 'a brand new blog').find('div', '.blog-item')
@@ -74,7 +74,7 @@ describe('Blog app', function() {
             })
         })
 
-        it.only('does not allow a user to delete a blog post they did not create', function() {
+        it('does not allow a user to delete a blog post they did not create', function() {
             cy.contains('button', 'logout').click()
 
             const user = {
@@ -93,6 +93,31 @@ describe('Blog app', function() {
               .contains('button', 'show')
               .click()
               .should('not.contain', 'remove')
+        })
+
+        it('displays blogs in order of number of likes', function() {
+
+
+            cy.newBlog({ title: 'Some likes', author: 'A newly published author', url: 'http://alright.com', likes: 2 })
+            cy.newBlog({ title: 'Second-highest likes', author: 'A well regarded author', url: 'http://secondbest.com', likes: 9 })
+            cy.newBlog({ title: 'Most likes', author: 'A well liked author', url: 'http://best.com', likes: 10 })
+
+            cy.get('.blog-item').eq(0).should('contain', 'Most likes')
+            cy.get('.blog-item').eq(1).should('contain', 'Second-highest likes')
+            cy.get('.blog-item').eq(2).should('contain', 'Some likes')
+            cy.get('.blog-item').eq(3).should('contain', 'Already exists')
+
+            cy.intercept('PUT', '/api/blogs/*').as('updateBlog')
+            cy.contains('Second-highest likes').contains('button', 'show').click()
+
+            cy.contains('Second-highest likes').contains('button', 'like').click()
+            cy.wait(['@updateBlog'], {responseTimeout: 5000 })
+
+            cy.contains('Second-highest likes').contains('button', 'like').click()
+            cy.wait(['@updateBlog'], {responseTimeout: 5000 })
+
+            cy.get('.blog-item').eq(0).should('contain', 'Second-highest likes')
+            cy.get('.blog-item').eq(1).should('contain', 'Most likes')
         })
     })
 })
