@@ -13,3 +13,6 @@ implement the ability to vote via the UI.
 
 ## 6.3: anecdotes, step1
 Implement the functionality for (voting anecdotes)[https://fullstackopen.com/en/part1/a_more_complex_state_debugging_react_apps#exercises-1-6-1-14]. The amount of votes must be saved to a Redux-store.
+
+## 6.4 anecdotes, step2
+Implement the functionality for adding new anecdotes.
