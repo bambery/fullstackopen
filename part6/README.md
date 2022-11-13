@@ -16,3 +16,6 @@ Implement the functionality for (voting anecdotes)[https://fullstackopen.com/en/
 
 ## 6.4 anecdotes, step2
 Implement the functionality for adding new anecdotes.
+
+## 6.5: anecdotes, step3
+Ensure anecdotes are ordered by number of votes
